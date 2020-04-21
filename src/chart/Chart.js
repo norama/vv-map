@@ -63,19 +63,21 @@ const Chart = () => {
 
         let scrollbarX = new am4charts.XYChartScrollbar();
 
-        let series = chart.series.push(new am4charts.LineSeries());
+        let series = chart.series.push(new am4charts.StepLineSeries());
         series.name = "Max. day temperature";
         series.dataFields.dateX = "date";
         series.dataFields.valueY = "maxtempC";
         series.tooltipText = "maxTemp: {valueY.value}";
+        series.bullets.push(new am4charts.CircleBullet());
         series.yAxis = valueAxisTemperature;
         scrollbarX.series.push(series);
 
-        series = chart.series.push(new am4charts.LineSeries());
+        series = chart.series.push(new am4charts.StepLineSeries());
         series.name = "Min. day temperature";
         series.dataFields.dateX = "date";
         series.dataFields.valueY = "mintempC";
         series.tooltipText = "minTemp: {valueY.value}";
+        series.bullets.push(new am4charts.CircleBullet());
         series.yAxis = valueAxisTemperature;
         scrollbarX.series.push(series);
 
@@ -122,11 +124,15 @@ const Chart = () => {
 
         weather.forEach((day, i) => {
             let date = new Date(day.date);
-            data.push({ date, maxtempC: day.maxtempC, mintempC: day.mintempC });
 
             day.hourly.forEach((hour) => {
                 date = new Date(formatTime(day.date, hour.time));
-                data.push({ date, DewPointC: hour.DewPointC, Humidity: hour.humidity });
+                let item = { date, DewPointC: hour.DewPointC, Humidity: hour.humidity };
+                if (hour.time === "0") {
+                    item.mintempC = day.mintempC;
+                    item.maxtempC = day.maxtempC;
+                }
+                data.push(item);
             });
         });
 
