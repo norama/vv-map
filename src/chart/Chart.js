@@ -25,8 +25,8 @@ const Chart = () => {
             am4core.color("red"),
             am4core.color("blue"),
             am4core.color("green"),
-            am4core.color("#FF9671"),
-            am4core.color("#FFC75F"),
+            am4core.color("cyan"),
+            am4core.color("magenta"),
             am4core.color("#F9F871")
         ];
 
@@ -53,30 +53,52 @@ const Chart = () => {
             });
         }
 */
-        let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-        valueAxis.tooltip.disabled = true;
-        valueAxis.renderer.minWidth = 35;
-    
+        let valueAxisTemperature = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxisTemperature.title.text = "Temperature (C)"
+        valueAxisTemperature.renderer.minWidth = 35;
+
+        let valueAxisPercent = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxisPercent.title.text = "Percent (%)";
+        valueAxisPercent.renderer.opposite = true;
+
+        let scrollbarX = new am4charts.XYChartScrollbar();
+
         let series = chart.series.push(new am4charts.LineSeries());
+        series.name = "Max. day temperature";
         series.dataFields.dateX = "date";
         series.dataFields.valueY = "maxtempC";
         series.tooltipText = "maxTemp: {valueY.value}";
-        chart.cursor = new am4charts.XYCursor();
+        series.yAxis = valueAxisTemperature;
+        scrollbarX.series.push(series);
 
         series = chart.series.push(new am4charts.LineSeries());
+        series.name = "Min. day temperature";
         series.dataFields.dateX = "date";
         series.dataFields.valueY = "mintempC";
         series.tooltipText = "minTemp: {valueY.value}";
-        chart.cursor = new am4charts.XYCursor();
+        series.yAxis = valueAxisTemperature;
+        scrollbarX.series.push(series);
 
         series = chart.series.push(new am4charts.LineSeries());
+        series.name = "Dew point";
         series.dataFields.dateX = "date";
         series.dataFields.valueY = "DewPointC";
         series.tooltipText = "DewPoint: {valueY.value}";
-        chart.cursor = new am4charts.XYCursor();
-    
-        let scrollbarX = new am4charts.XYChartScrollbar();
+        series.yAxis = valueAxisTemperature;
         scrollbarX.series.push(series);
+
+        series = chart.series.push(new am4charts.LineSeries());
+        series.name = "Relative humidity (%)";
+        series.dataFields.dateX = "date";
+        series.dataFields.valueY = "Humidity";
+        series.tooltipText = "Humidity: {valueY.value}";
+        series.strokeWidth = 3;
+        series.yAxis = valueAxisPercent;
+        scrollbarX.series.push(series);
+
+        chart.legend = new am4charts.Legend();
+        chart.cursor = new am4charts.XYCursor();
+
         chart.scrollbarX = scrollbarX;
     };
 
@@ -104,7 +126,7 @@ const Chart = () => {
 
             day.hourly.forEach((hour) => {
                 date = new Date(formatTime(day.date, hour.time));
-                data.push({ date, DewPointC: hour.DewPointC });
+                data.push({ date, DewPointC: hour.DewPointC, Humidity: hour.humidity });
             });
         });
 
