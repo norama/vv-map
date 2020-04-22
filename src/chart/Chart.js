@@ -13,6 +13,14 @@ function formatTime(date, hour) {
     return date + ' ' + hour.substring(0, hour.length-2) + ':00';
 }
 
+function configBullet(bullet) {
+    var circle = bullet.createChild(am4core.Circle);
+    circle.width = 10;
+    circle.height = 10;
+    circle.horizontalCenter = "middle";
+    circle.verticalCenter = "middle";
+}
+
 const Chart = () => {
 
     const [ chartData, setChartData ] = useState(null);
@@ -22,8 +30,8 @@ const Chart = () => {
         chart.paddingRight = 30;
 
         chart.colors.list = [
-            am4core.color("red"),
             am4core.color("blue"),
+            am4core.color("red"),
             am4core.color("green"),
             am4core.color("cyan"),
             am4core.color("magenta"),
@@ -64,20 +72,24 @@ const Chart = () => {
         let scrollbarX = new am4charts.XYChartScrollbar();
 
         let series = chart.series.push(new am4charts.StepLineSeries());
-        series.name = "Max. day temperature";
-        series.dataFields.dateX = "date";
-        series.dataFields.valueY = "maxtempC";
-        series.tooltipText = "maxTemp: {valueY.value}";
-        series.bullets.push(new am4charts.CircleBullet());
-        series.yAxis = valueAxisTemperature;
-        scrollbarX.series.push(series);
-
-        series = chart.series.push(new am4charts.StepLineSeries());
         series.name = "Min. day temperature";
         series.dataFields.dateX = "date";
         series.dataFields.valueY = "mintempC";
         series.tooltipText = "minTemp: {valueY.value}";
-        series.bullets.push(new am4charts.CircleBullet());
+        series.startLocation = 0.5;
+        let bullet = series.bullets.push(new am4charts.Bullet());
+        configBullet(bullet);
+        series.yAxis = valueAxisTemperature;
+        scrollbarX.series.push(series);
+
+        series = chart.series.push(new am4charts.StepLineSeries());
+        series.name = "Max. day temperature";
+        series.dataFields.dateX = "date";
+        series.dataFields.valueY = "maxtempC";
+        series.tooltipText = "maxTemp: {valueY.value}";
+        series.startLocation = 0.5;
+        bullet = series.bullets.push(new am4charts.Bullet());
+        configBullet(bullet);
         series.yAxis = valueAxisTemperature;
         scrollbarX.series.push(series);
 
