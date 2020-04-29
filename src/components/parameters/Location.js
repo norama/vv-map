@@ -50,12 +50,23 @@ const Location = () => {
             collapsed: true,
             position: "topleft",
             geocoder: geocoder,
-            suggestMinLength: 3
+            query: LONDON_QUERY,
+            suggestMinLength: 3,
+            placeholder: "Search query or lat,lng"
         }).on('markgeocode', function(e) {
             console.log(e.geocode.center);
+            setTimeout(() => {
+                geocoderControl._expand();
+            }, 500);
+        }).on('collapse', function() {
+            setTimeout(() => {
+                geocoderControl._expand();
+            }, 500);
         }).addTo(map);
 
-        geocoderControl.setQuery(LONDON_QUERY);
+        geocoderControl._toggle = geocoderControl._geocode;
+        
+        const searchInput = document.querySelector('.leaflet-control-geocoder-form input');
 
         const markGeocode = (result) => {
             if (!result.bbox) {
@@ -65,6 +76,9 @@ const Location = () => {
                 result.html = `[${result.center.lat}, ${result.center.lng}]`;
             }
             geocoderControl.markGeocode(result);
+            setTimeout(() => {
+                geocoderControl._expand();
+            }, 500);
         }
 
         geocoder.geocode(LONDON_QUERY, (results) => {
@@ -73,17 +87,26 @@ const Location = () => {
             markGeocode(result);
         });
 
+        map.on('expand', function() {
+            searchInput.focus();
+        });
+
         map.on('dblclick', function(event) {
             console.log(event);
             const latlng = L.latLng(event.latlng);
             geocoder.reverse(latlng, 1, (results) => {
                 console.log(results);
+                searchInput.value = "" + latlng.lat + "." + latlng.lng;
                 let result = results.length ? results[0] : {};
                 result = { ...result, center: latlng };
                 markGeocode(result);
             });
         });
 
+        setTimeout(() => {
+            geocoderControl._expand();
+
+        }, 500);
     }, []);
 
     return (<div id="map" className="leaflet-map"></div>);

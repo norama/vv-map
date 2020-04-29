@@ -1,0 +1,16 @@
+.leaflet-map {
+    width: 600px;
+    height: 600px;
+}
+
+.leaflet-control-geocoder-form input {
+    width: 400px !important;
+}
+
+.leaflet-control-geocoder-alternatives {
+    width: 100% !important;
+}
+
+.leaflet-control-geocoder-icon:hover {
+    background-color: antiquewhite;
+}
