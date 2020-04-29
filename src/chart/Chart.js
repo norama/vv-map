@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
+import { Button, Popover, PopoverHeader, PopoverBody } from 'reactstrap';
+
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
+
+import DateRange from './DateRange';
+import Location from './Location';
+
+import './Chart.css';
 
 const DEGREE = "\u00B0";
 const FONT = "DejaVu Sans Mono";
@@ -191,6 +198,8 @@ function configWindSpeedSeries(series) {
 
 const Chart = () => {
 
+
+    const [ parametersOpen, setParametersOpen ] = useState(false);
     const [ chartData, setChartData ] = useState(null);
 
     const config = (chart) => {
@@ -370,9 +379,25 @@ const Chart = () => {
             });
     };
 
+    const toggle = () => {
+        setParametersOpen((open) => {
+            if (open) {
+                fetchWeather();
+            }
+            return !open;
+        })
+    };
+
     return (
         <div>
-            <button onClick={fetchWeather}>Weather</button>
+            <Button color="primary" id="popover" type="button" style={{ width: "300px" }}>{parametersOpen ? "Show" : "Parameters"}</Button>
+            <Popover placement="bottom" isOpen={parametersOpen} target="popover" toggle={toggle}>
+                <PopoverHeader>Date Range and Location</PopoverHeader>
+                <PopoverBody>
+                    <DateRange />
+                    <Location onLocationChange={(latlng) => { console.log('latlng', latlng); }} />
+                </PopoverBody>
+            </Popover>
             <div id="chartdiv" style={{ width: "100%", height: "90vh" }}></div>
         </div>
     );

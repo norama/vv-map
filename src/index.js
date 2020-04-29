@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom';
 import Main from './Main';
 import * as serviceWorker from './serviceWorker';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-control-geocoder/Control.Geocoder.css';
+
 ReactDOM.render(
   <React.StrictMode>
     <Main />
