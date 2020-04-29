@@ -109,7 +109,12 @@ const Location = () => {
         }, 500);
     }, []);
 
-    return (<div id="map" className="leaflet-map"></div>);
+    return (
+        <div className="__Location__">
+            <h5 className="title">Location:</h5>
+            <div id="map" className="leaflet-map"></div>
+        </div>
+    );
 };
 
 export default Location;

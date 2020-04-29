@@ -1,10 +1,30 @@
-.leaflet-map {
-    width: 600px;
-    height: 600px;
+.__Location__ .title {
+    height: 30px;
+    margin-top: 10px;
+    margin-left: 10px;
 }
 
-.leaflet-control-geocoder-form input {
-    width: 400px !important;
+.leaflet-map {
+    width: 100vw;
+    height: calc(100vh - 120px);
+}
+
+@media only screen and (min-width: 550px) {
+    .leaflet-control-geocoder-form input {
+        width: 500px !important;
+    }
+}
+
+@media only screen and (min-width: 450px) and (max-width: 550px) {
+    .leaflet-control-geocoder-form input {
+        width: 400px !important;
+    }
+}
+
+@media only screen and (max-width: 320px) {
+    .leaflet-control-geocoder-form input {
+        width: 100px !important;
+    }
 }
 
 .leaflet-control-geocoder-alternatives {

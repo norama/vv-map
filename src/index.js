@@ -4,8 +4,14 @@ import Main from './Main';
 import * as serviceWorker from './serviceWorker';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+// leaflet styles
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-control-geocoder/Control.Geocoder.css';
+
+// react-date-range styles
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
 
 ReactDOM.render(
   <React.StrictMode>

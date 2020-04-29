@@ -1,0 +1,32 @@
+.__DateRange__ {
+    height: 70px;
+    border-bottom: 1px solid darkgray;
+}
+
+.__DateRange__ .daterange {
+    display: flex;
+    margin-top: 10px;
+}
+
+.__DateRange__ .title {
+    margin-top: 15px;
+    margin-left: 10px;
+}
+
+.__DateRange__ .range {
+    display: flex;
+}
+
+.__DateRange__ .text {
+    margin-top: 15px;
+    margin-left: 40px;
+}
+
+.__DateRange__ .text:hover {
+    cursor: pointer;
+}
+
+.__DateRange__ .change {
+    margin-left: 40px;
+    width: 150px;
+}

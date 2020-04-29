@@ -1,0 +1,8 @@
+.__Weather__ .weather-button {
+    display: flex;
+}
+
+.__Weather__ .weather-button .button {
+    margin: 15px 20px 15px auto;
+    width: 200px;
+}

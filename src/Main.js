@@ -5,7 +5,7 @@ import {
     Route
 } from "react-router-dom";
 
-import Chart from './components/Chart';
+import Weather from './components/Weather';
 import Parameters from './components/Parameters';
 
 const Main = () => {
@@ -17,7 +17,7 @@ const Main = () => {
                     <Parameters />
                 </Route>
                 <Route path="/">
-                    <Chart />
+                    <Weather />
                 </Route>
             </Switch>
       </Router>  
