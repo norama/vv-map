@@ -4,22 +4,35 @@ import { format } from 'date-fns';
 
 import { Button } from 'reactstrap';
 
+import { useQuery } from '../util/query';
+
 import DateRange from './parameters/DateRange';
 import Location from './parameters/Location';
 
+import { START_DATE, END_DATE, LONDON_LATLNG, LONDON_NAME } from './constants';
+
 import './Parameters.css';
 
-const START_DATE = new Date('2020-03-01');
-const END_DATE = new Date('2020-03-31');
-
-const LONDON_LATLNG = [51.533,-0.129];
-const LONDON_QUERY = "London";
 
 const Parameters = () => {
     const [ weather, setWeather ] = useState(false);
 
-    const [ dateRange, setDateRange ] = useState({ startDate: START_DATE, endDate: END_DATE });
-    const [ location, setLocation ] = useState({ latlng: LONDON_LATLNG, name: LONDON_QUERY });
+    const query = useQuery();
+
+    const startDate = new Date(query.get("startDate", START_DATE));
+    const endDate = new Date(query.get("endDate", END_DATE));
+
+    const latlng = [ parseFloat(query.get("lat", LONDON_LATLNG.lat)), parseFloat(query.get("lng", LONDON_LATLNG.lng)) ];
+    const name = query.get('name', LONDON_NAME);
+
+    const [ dateRange, setDateRange ] = useState({
+        startDate,
+        endDate
+    });
+    const [ location, setLocation ] = useState({
+        latlng,
+        name
+    });
 
     const handleWeatherClick = () => {
         setWeather(true);
@@ -39,7 +52,7 @@ const Parameters = () => {
                 <DateRange startDate={dateRange.startDate} endDate={dateRange.endDate} onChange={setDateRange} />
                 <Button color="primary" className="button" onClick={handleWeatherClick}>Show Weather</Button>
             </div>
-            <Location latlng={LONDON_LATLNG} query={LONDON_QUERY} onChange={setLocation} />
+            <Location latlng={latlng} query={name} onChange={setLocation} />
         </div>
     );
 };

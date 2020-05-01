@@ -91,4 +91,3 @@ const Chart = ({ location, dateRange }) => {
 };
 
 export default Chart;
-
