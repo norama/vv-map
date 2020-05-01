@@ -298,6 +298,7 @@ const configChart = (chart, { startDate, endDate }) => {
     var markerTemplate = chart.legend.markers.template;
     markerTemplate.width = 40;
     markerTemplate.height = 40;
+    chart.legend.position = "right";
     chart.legend.labels.template.fontWeight = 500;
     chart.legend.labels.template.fontFamily = FONT;
 

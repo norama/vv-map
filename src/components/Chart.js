@@ -6,6 +6,8 @@ import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 
 import configChart from './chart/configChart';
 
+import { fetchWeather } from '../api/weather';
+
 import './Chart.css';
 
 am4core.useTheme(am4themes_animated);
@@ -37,7 +39,11 @@ const Chart = ({ location, dateRange }) => {
     }, [ chartData ]);
 
     useEffect(() => {
-        fetchWeather();
+        fetchWeather(location, dateRange).then((response) => {
+            console.log(response);
+
+            setChartData(weatherData(response.data.weather));
+        });
     }, []);
 
     const weatherData = (weather) => {
@@ -73,16 +79,6 @@ const Chart = ({ location, dateRange }) => {
         });
 
         return data;
-    };
-
-    const fetchWeather = () => {
-        //fetch('https://api.worldweatheronline.com/premium/v1/past-weather.ashx?key=3f2b6d0ba2734bc49b6173238202004&q=New+york,ny&format=json&date=2020-02-01&enddate=2020-03-31')
-        fetch(`https://api.worldweatheronline.com/premium/v1/past-weather.ashx?key=3f2b6d0ba2734bc49b6173238202004&q=${location.lat+','+location.lng}&format=json&date=${dateRange.startDate}&enddate=${dateRange.endDate}`)
-            .then((response) => (response.json())).then((response) => {
-                console.log(response);
-
-                setChartData(weatherData(response.data.weather));
-            });
     };
 
     return (
