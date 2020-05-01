@@ -1,8 +1,28 @@
-.__Weather__ .weather-button {
+.__Weather__ .weather-info {
     display: flex;
 }
 
-.__Weather__ .weather-button .button {
-    margin: 15px 20px 15px auto;
+.__Weather__ .weather-info {
+    margin: 15px 20px;
+}
+
+.__Weather__ .weather-info h5 {
+    margin-top: 10px;
+}
+
+.__Weather__ .weather-info .name {
+    width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.__Weather__ .weather-info .date-range {
+    margin-left: 60px;
+}
+
+.__Weather__ .weather-info .button {
+    margin-left: auto;
     width: 200px;
+    height: 40px;
 }

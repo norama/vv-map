@@ -2,6 +2,8 @@
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 
+import { addDays, subDays, format } from 'date-fns';
+
 const DEGREE = "\u00B0";
 const FONT = "DejaVu Sans Mono";
 
@@ -56,11 +58,18 @@ function configWindBullet(bullet, showSize=true) {
     hoverState.properties.scale = 2;
 }
 
-function configDateAxis(dateAxis) {
+function configDateAxis(dateAxis, startDate, endDate) {
     dateAxis.renderer.grid.template.disabled = true;
     //dateAxis.renderer.labels.template.disabled = true;
-    dateAxis.min = (new Date("2020-02-29 18:00")).getTime();
-    dateAxis.max = (new Date("2020-03-16 06:00")).getTime();
+
+    let beforeStartDate = subDays(new Date(startDate), 1);
+    beforeStartDate.setHours(18);
+
+    let afterEndDate = addDays(new Date(endDate), 1);
+    afterEndDate.setHours(6);
+
+    dateAxis.min = beforeStartDate.getTime();
+    dateAxis.max = afterEndDate.getTime();
 
     dateAxis.renderer.labels.template.location = 0.5;
 
@@ -82,7 +91,7 @@ function configSpeedAxis(speedAxis) {
     speedAxis.title.text = "Speed (km/h)";
     speedAxis.title.fontWeight = 700;
     speedAxis.title.fontFamily = FONT;
-    speedAxis.min = 0;
+    speedAxis.min = -20;
     speedAxis.max = 120;
     speedAxis.renderer.minGridDistance = 30;
 }
@@ -179,7 +188,7 @@ function configWindSpeedSeries(series) {
 }
 
 
-const configChart = (chart) => {
+const configChart = (chart, { startDate, endDate }) => {
 
     chart.leftAxesContainer.layout = "vertical";
     chart.rightAxesContainer.layout = "vertical";
@@ -197,7 +206,7 @@ const configChart = (chart) => {
     ];
 
     let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-    configDateAxis(dateAxis);
+    configDateAxis(dateAxis, startDate, endDate);
 /*
     let pictogramAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configPictogramAxis(pictogramAxis);
@@ -239,21 +248,21 @@ const configChart = (chart) => {
     let series = chart.series.push(new am4charts.StepLineSeries());
     configMinDayTemperatureSeries(series);
     series.yAxis = temperatureAxis;
-    scrollbarX.series.push(series);
+    //scrollbarX.series.push(series);
     //scrollbarY.series.push(series);
 
     // Max. day temperature
     series = chart.series.push(new am4charts.StepLineSeries());
     configMaxDayTemperatureSeries(series);
     series.yAxis = temperatureAxis;
-    scrollbarX.series.push(series);
+    //scrollbarX.series.push(series);
     //scrollbarY.series.push(series);
 
     // Dew point
     series = chart.series.push(new am4charts.LineSeries());
     configDewPointSeries(series);
     series.yAxis = temperatureAxis;
-    scrollbarX.series.push(series);
+    //scrollbarX.series.push(series);
     //scrollbarY.series.push(series);
 
     // Relative humidity

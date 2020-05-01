@@ -1,22 +1,14 @@
 import React, { useState } from 'react';
 import { DateRangePicker } from 'react-date-range';
-import { addDays, format } from 'date-fns';
+import { format } from 'date-fns';
 
 import { Button, Popover, PopoverBody } from 'reactstrap';
 
 import './DateRange.css';
 
 const DATE_FORMAT = "MMM d, yyyy";
-const START_DATE = new Date('2020-03-01');
-const END_DATE = new Date('2020-03-31');
 
-const DateRange = () => {
-
-    const [state, setState] = useState([{
-          startDate: START_DATE,
-          endDate: END_DATE,
-          key: 'selection'
-    }]);
+const DateRange = ({ startDate, endDate, onChange }) => {
 
     const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -26,7 +18,7 @@ const DateRange = () => {
 
     const handleSelect = (item) => {
         console.log(item.selection);
-        setState([item.selection]);
+        onChange(item.selection);
     };
 
     return (
@@ -34,7 +26,7 @@ const DateRange = () => {
             <div className="daterange">
                 <h5 className="title">Date range:</h5>
                 <div className="range" id="popover">
-                    <h5 className="text">{format(START_DATE, DATE_FORMAT)} - {format(END_DATE, DATE_FORMAT)}</h5>
+                    <h5 className="text">{format(startDate, DATE_FORMAT)} - {format(endDate, DATE_FORMAT)}</h5>
                     <Button outline={!popoverOpen} color="secondary" className="change">{popoverOpen ? "Done" : "Change"}</Button>
                 </div>
             </div>
@@ -43,9 +35,10 @@ const DateRange = () => {
                     <DateRangePicker
                         showSelectionPreview={true}
                         moveRangeOnFirstSelection={false}
+                        maxDate={new Date()}
                         months={2}
                         direction="horizontal"
-                        ranges={state}
+                        ranges={[{ startDate, endDate, key: 'selection' }]}
                         onChange={handleSelect}
                     />
                 </PopoverBody>

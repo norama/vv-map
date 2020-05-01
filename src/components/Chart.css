@@ -1,3 +1,4 @@
-.popover {
-    max-width: 100% !important;
+.__Chart__ {
+    width: 100%;
+    height: calc(100vh - 100px);
 }

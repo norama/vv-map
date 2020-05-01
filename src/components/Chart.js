@@ -18,7 +18,7 @@ function formatTime(date, hour) {
     return date + ' ' + hour.substring(0, hour.length-2) + ':00';
 }
 
-const Chart = () => {
+const Chart = ({ location, dateRange }) => {
 
     const [ chartData, setChartData ] = useState(null);
 
@@ -29,7 +29,7 @@ const Chart = () => {
             chart.data = chartData;
         }
 
-        configChart(chart);
+        configChart(chart, dateRange);
 
         return function cleanup() {
             chart.dispose();
@@ -76,7 +76,8 @@ const Chart = () => {
     };
 
     const fetchWeather = () => {
-        fetch('https://api.worldweatheronline.com/premium/v1/past-weather.ashx?key=3f2b6d0ba2734bc49b6173238202004&q=New+york,ny&format=json&date=2020-03-01&enddate=2020-03-15')
+        //fetch('https://api.worldweatheronline.com/premium/v1/past-weather.ashx?key=3f2b6d0ba2734bc49b6173238202004&q=New+york,ny&format=json&date=2020-02-01&enddate=2020-03-31')
+        fetch(`https://api.worldweatheronline.com/premium/v1/past-weather.ashx?key=3f2b6d0ba2734bc49b6173238202004&q=${location.lat+','+location.lng}&format=json&date=${dateRange.startDate}&enddate=${dateRange.endDate}`)
             .then((response) => (response.json())).then((response) => {
                 console.log(response);
 
@@ -85,7 +86,7 @@ const Chart = () => {
     };
 
     return (
-        <div id="chartdiv" style={{ width: "100%", height: "90vh" }}></div>
+        <div id="chartdiv" className="__Chart__"></div>
     );
 };
 

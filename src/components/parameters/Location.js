@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import L from 'leaflet';
 
 import Geocoder from 'leaflet-control-geocoder';
@@ -21,15 +21,18 @@ const DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const LONDON_LATLNG = [51.53299545398796,-0.12908935546875003];
-const LONDON_QUERY = "London";
+const Location = ({ latlng, query, onChange }) => {
 
+    useEffect(() => {
 
-const Location = () => {
-    React.useEffect(() => {
+        // onChange callback
+        const handleChange = (result) => {
+            onChange({ latlng: [result.center.lat, result.center.lng], name: result.name });
+        };
+
         // create map
         const map = L.map('map', {
-            center: LONDON_LATLNG,
+            center: latlng,
             zoom: 16,
             zoomControl: false,
             layers: [
@@ -50,11 +53,14 @@ const Location = () => {
             collapsed: true,
             position: "topleft",
             geocoder: geocoder,
-            query: LONDON_QUERY,
+            query: query,
             suggestMinLength: 3,
             placeholder: "Search query or lat,lng"
         }).on('markgeocode', function(e) {
-            console.log(e.geocode.center);
+            console.log('markgeocode', e.geocode);
+
+            handleChange(e.geocode);
+
             setTimeout(() => {
                 geocoderControl._expand();
             }, 500);
@@ -69,21 +75,25 @@ const Location = () => {
         const searchInput = document.querySelector('.leaflet-control-geocoder-form input');
 
         const markGeocode = (result) => {
+            console.log('result', result);
             if (!result.bbox) {
                 result.bbox = L.latLngBounds(result.center, result.center);
             }
             if (!result.html && !result.name) {
                 result.html = `[${result.center.lat}, ${result.center.lng}]`;
+                result.name = '';
             }
             geocoderControl.markGeocode(result);
+
+            handleChange(result);
+
             setTimeout(() => {
                 geocoderControl._expand();
             }, 500);
         }
 
-        geocoder.geocode(LONDON_QUERY, (results) => {
-            console.log(results);
-            const result = results.length ? results[0] : { center: L.latLng(LONDON_LATLNG) };
+        geocoder.geocode(query, (results) => {
+            const result = results.length ? results[0] : { center: L.latLng(latlng) };
             markGeocode(result);
         });
 
@@ -92,10 +102,8 @@ const Location = () => {
         });
 
         map.on('dblclick', function(event) {
-            console.log(event);
             const latlng = L.latLng(event.latlng);
             geocoder.reverse(latlng, 1, (results) => {
-                console.log(results);
                 searchInput.value = "" + latlng.lat + "." + latlng.lng;
                 let result = results.length ? results[0] : {};
                 result = { ...result, center: latlng };
@@ -111,7 +119,7 @@ const Location = () => {
 
     return (
         <div className="__Location__">
-            <h5 className="title">Location:</h5>
+            <h5 className="title">Location (search or double click on map):</h5>
             <div id="map" className="leaflet-map"></div>
         </div>
     );
