@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Redirect } from 'react-router';
-import { format } from 'date-fns';
 
 import { Button } from 'reactstrap';
 
 import { useQuery } from '../util/query';
+
+import { dateString } from '../util/date';
 
 import DateRange from './parameters/DateRange';
 import Location from './parameters/Location';
@@ -43,8 +44,8 @@ const Parameters = () => {
             `lat=${location.latlng[0].toFixed(3)}` + '&' +
             `lng=${location.latlng[1].toFixed(3)}` + '&' +
             `name=${location.name}` + '&' +
-            `startDate=${format(dateRange.startDate, 'yyyy-MM-dd')}` + '&' +
-            `endDate=${format(dateRange.endDate, 'yyyy-MM-dd')}`
+            `startDate=${dateString(dateRange.startDate)}` + '&' +
+            `endDate=${dateString(dateRange.endDate)}`
         } />
     ) : (
         <div className="__Parameters__">

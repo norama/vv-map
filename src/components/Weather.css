@@ -27,3 +27,9 @@
     width: 200px;
     height: 40px;
 }
+
+.__Weather__ .weather-reference {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}

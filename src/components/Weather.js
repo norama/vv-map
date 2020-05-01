@@ -12,27 +12,27 @@ import Chart from './Chart';
 
 import './Weather.css';
 
+const displayedDate = (str) => (format(new Date(str), 'MMM d'));
+
 const Weather = () => {
 
     const query = useQuery();
+
+    const [ location ] = useState({
+        lat: query.get("lat", LONDON_LATLNG.lat),
+        lng: query.get("lng", LONDON_LATLNG.lng)
+    });
+    const [ dateRange ] = useState({
+        startDate: query.get("startDate", START_DATE),
+        endDate: query.get("endDate", END_DATE)
+    });
+    const [ name ] = useState(query.get("name", ""));
 
     const [ parameters, setParameters ] = useState(false);
 
     const handleParameters = () => {
         setParameters(true);
     }
-
-    const formatDate = (str) => (format(new Date(str), 'MMM d'));
-
-    const location = {
-        lat: query.get("lat", LONDON_LATLNG.lat),
-        lng: query.get("lng", LONDON_LATLNG.lng)
-    };
-    const dateRange = {
-        startDate: query.get("startDate", START_DATE),
-        endDate: query.get("endDate", END_DATE)
-    };
-    const name = query.get("name", "");
 
     return parameters ? (
         <Redirect to={'/parameters?' + 
@@ -46,10 +46,11 @@ const Weather = () => {
         <div className="__Weather__">
             <div className="weather-info">
                 <h5 className="name">{query.get("name", LONDON_NAME)}</h5>
-                <h5 className="date-range">{formatDate(dateRange.startDate) + ' - ' + formatDate(dateRange.endDate)}</h5>
+                <h5 className="date-range">{displayedDate(dateRange.startDate) + ' - ' + displayedDate(dateRange.endDate)}</h5>
                 <Button color="primary" type="button" onClick={handleParameters} className="button">Parameters</Button>
             </div>
             <Chart location={location} dateRange={dateRange} />
+            <a href="https://www.worldweatheronline.com/developer/" className="weather-reference" target="_blank" rel="noopener">Powered by World Weather Online</a>
         </div>
     );
 }

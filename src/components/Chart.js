@@ -6,7 +6,7 @@ import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 
 import configChart from './chart/configChart';
 
-import { fetchWeather } from '../api/weather';
+import fetchWeather from '../api/fetchWeather';
 
 import './Chart.css';
 
@@ -39,10 +39,10 @@ const Chart = ({ location, dateRange }) => {
     }, [ chartData ]);
 
     useEffect(() => {
-        fetchWeather(location, dateRange).then((response) => {
-            console.log(response);
+        fetchWeather(location, dateRange).then((weather) => {
+            console.log(weather);
 
-            setChartData(weatherData(response.data.weather));
+            setChartData(weatherData(weather));
         });
     }, []);
 
