@@ -19,8 +19,9 @@ This web application shows historical weather data using the [World Weather Onli
 Data:
 
 - min-max daily temperature
-- dew point
-- relative humidity
+- temperature
+- [dew point](https://en.wikipedia.org/wiki/Dew_point)
+- [relative humidity](https://en.wikipedia.org/wiki/Relative_humidity)
 - wind (graph by speed with direction in arrow bullet)
 
 ## Usage
@@ -33,10 +34,12 @@ Zoom: use hte minichart at the top to zoom into a specific date interval, then y
 Specify shown data series: you can set which series are shown by clicking on the corresponding legend items on the right.
 
 You can set the location and date range parameters on the parameters page 
-(`Parameters` button in top-right corner or `<base URL>/parameters` URL in browser).
+(`Parameters` button in top-right corner or\
+`<base URL>/parameters` URL in browser).
 
 Then weather data is shown on the main page 
-(`Show weather` button in top-right corner or `<base URL>/` URL in browser).
+(`Show weather` button in top-right corner or\
+`<base URL>/` URL in browser).
 
 Both the weather and the parameter page read location parameters from query string, e.g. it is\
 `?lat=47.203&lng=12.261&startDate=2020-01-16&endDate=2020-04-30` for the default London March 2020 setting. There is an optional name parameter for display.
@@ -49,7 +52,7 @@ Parameters:
 
 ## Demo
 
-[Demo]() is available [here]();.
+[Demo](https://norama.github.io/vv-map) is available [here](https://norama.github.io/vv-map).
 
 ## Available Scripts
 
