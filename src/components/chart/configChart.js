@@ -74,6 +74,18 @@ function configDateAxis(dateAxis, startDate, endDate) {
     dateAxis.renderer.labels.template.location = 0.5;
 
     dateAxis.tooltipDateFormat = "MM-dd:HH";
+
+    dateAxis.groupData = true;
+    dateAxis.groupCount = 500;
+    dateAxis.groupIntervals.setAll([
+        { timeUnit: "hour", count: 1 },
+        { timeUnit: "hour", count: 3 },
+        { timeUnit: "hour", count: 6 },
+        { timeUnit: "hour", count: 12 },
+        { timeUnit: "month", count: 1 },
+        { timeUnit: "year", count: 1 },
+        { timeUnit: "year", count: 10 }
+    ]);
 }
 
 function configPictogramAxis(pictogramAxis) {
@@ -141,6 +153,7 @@ function configDewPointSeries(series) {
     series.tooltipText = "DewPoint: {valueY.value} " + DEGREE + "C";
     series.strokeWidth = 3;
 
+    series.minBulletDistance = 5;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }
@@ -152,6 +165,7 @@ function configHumiditySeries(series) {
     series.tooltipText = "Humidity: {valueY.value} %";
     series.strokeWidth = 3;
 
+    series.minBulletDistance = 5;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }
@@ -190,7 +204,7 @@ function configWindSpeedSeries(series) {
 export function createCertain(chart) {
     let certain = chart.tooltipContainer.createChild(am4core.Container);
     certain.background.fill = am4core.color("#fff");
-    certain.background.fillOpacity = 0;
+    certain.background.fillOpacity = 0.9;
     certain.width = am4core.percent(100);
     certain.height = am4core.percent(100);
     return certain;

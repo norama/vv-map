@@ -14,12 +14,13 @@ import './Chart.css';
 
 am4core.useTheme(theme);
 
+const THREE_HOURS = 3 * 3600000;
 
 function formatTime(date, hour) {
     if (hour === "0") {
         hour = "000";
     }
-    return date + ' ' + hour.substring(0, hour.length-2) + ':00';
+    return new Date(date + ' ' + hour.substring(0, hour.length-2) + ':00');
 }
 
 const Chart = ({ location, dateRange }) => {
@@ -30,13 +31,12 @@ const Chart = ({ location, dateRange }) => {
         let chart = am4core.create("chartdiv", am4charts.XYChart);
 
         const certain = createCertain(chart);
-
         certain.show();
-
-        configChart(chart, dateRange);
 
         fetchWeather(location, dateRange).then((weather) => {
             console.log(weather);
+
+            configChart(chart, dateRange);
 
             chart.data = weatherData(weather);
 
@@ -50,43 +50,20 @@ const Chart = ({ location, dateRange }) => {
             chart.dispose();
         };
     }, []);
-/*
-    useEffect(() => {
-        
-        let chart = am4core.create("chartdiv", am4charts.XYChart);
 
-        configChart(chart, dateRange);
-
-        if (chartData) {
-            chart.data = chartData;
-        }
-
-        setLoading(false);
-
-        return function cleanup() {
-            chart.dispose();
-        };
-    }, [ chartData ]);
-
-    useEffect(() => {
-        fetchWeather(location, dateRange).then((weather) => {
-            console.log(weather);
-
-            setChartData(weatherData(weather));
-        });
-    }, []);
-*/
     const weatherData = (weather) => {
 
         let data = [];
+        let millis = 0;
 
         weather.forEach((day, i) => {
-            let date = new Date(day.date);
+            if (millis === 0) {
+                millis = new Date(day.date).getTime();
+            }
 
             day.hourly.forEach((hour) => {
-                date = new Date(formatTime(day.date, hour.time));
                 let item = {
-                    date,
+                    date: millis,
                     DewPointC: hour.DewPointC,
                     Humidity: hour.humidity,
                     WeatherPictogram: 2,
@@ -98,13 +75,8 @@ const Chart = ({ location, dateRange }) => {
                     mintempC: day.mintempC,
                     maxtempC: day.maxtempC
                 };
-                /*
-                if (hour.time === "0") {
-                    item.mintempC = day.mintempC;
-                    item.maxtempC = day.maxtempC;
-                }
-                */
                 data.push(item);
+                millis += THREE_HOURS;
             });
         });
 
