@@ -45,12 +45,12 @@ const Weather = () => {
     ) : (
         <div className="__Weather__">
             <div className="weather-info">
-                <h5 className="name">{name}</h5>
+                <h5 className="name" title={name}>{name}</h5>
                 <h5 className="date-range">{displayedDate(dateRange.startDate) + ' - ' + displayedDate(dateRange.endDate)}</h5>
                 <Button color="primary" type="button" onClick={handleParameters} className="button">Parameters</Button>
             </div>
             <Chart location={location} dateRange={dateRange} />
-            <a href="https://www.worldweatheronline.com/developer/" className="weather-reference" target="_blank" rel="noopener">Powered by World Weather Online</a>
+            <a href="https://www.worldweatheronline.com/developer/" className="weather-reference" target="_blank" rel="noopener noreferrer">Powered by World Weather Online</a>
         </div>
     );
 }
