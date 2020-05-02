@@ -1,4 +1,8 @@
 .__Chart__ {
+    position: relative;
+}
+
+.__Chart__ .chart {
     width: 100%;
     height: calc(100vh - 100px);
 }

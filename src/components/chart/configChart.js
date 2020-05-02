@@ -187,11 +187,21 @@ function configWindSpeedSeries(series) {
     series.strokeWidth = 1;
 }
 
+export function createCertain(chart) {
+    let certain = chart.tooltipContainer.createChild(am4core.Container);
+    certain.background.fill = am4core.color("#fff");
+    certain.background.fillOpacity = 0;
+    certain.width = am4core.percent(100);
+    certain.height = am4core.percent(100);
+    return certain;
+}
 
 const configChart = (chart, { startDate, endDate }) => {
 
     chart.leftAxesContainer.layout = "vertical";
     chart.rightAxesContainer.layout = "vertical";
+
+    chart.preloader.disabled = true;
 
     chart.paddingRight = 30;
 
@@ -299,6 +309,7 @@ const configChart = (chart, { startDate, endDate }) => {
     markerTemplate.width = 40;
     markerTemplate.height = 40;
     chart.legend.position = "right";
+    chart.legend.labels.template.fontSize = 12;
     chart.legend.labels.template.fontWeight = 500;
     chart.legend.labels.template.fontFamily = FONT;
 
