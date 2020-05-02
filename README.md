@@ -16,6 +16,13 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 This web application shows historical weather data using the [World Weather Online](https://www.worldweatheronline.com/developer/api/) servie for weather data and [amcharts 4](https://www.amcharts.com/docs/v4/) for display.
 
+Data:
+
+- min-max daily temperature
+- dew point
+- relative humidity
+- wind (graph by speed with direction in arrow bullet)
+
 ## Usage
 
 Start the application locally with [yarn start](#yarn-start) or use the [Demo](#demo).
