@@ -38,7 +38,7 @@ You can set the location and date range parameters on the parameters page
 Then weather data is shown on the main page 
 (`Show weather` button in top-right corner or `<base URL>/` URL in browser).
 
-Both the weather and the parameter page read location parameters from query string, e.g. it is
+Both the weather and the parameter page read location parameters from query string, e.g. it is\
 `?lat=47.203&lng=12.261&startDate=2020-01-16&endDate=2020-04-30` for the default London March 2020 setting. There is an optional name parameter for display.
 
 Parameters:
