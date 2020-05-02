@@ -1,9 +1,6 @@
 import { useLocation } from 'react-router-dom';
 
 class Params extends URLSearchParams {
-    constructor(init) {
-        super(init);
-    }
 
     get(name, defaultValue=null) {
         const value = super.get(name);

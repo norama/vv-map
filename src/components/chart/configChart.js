@@ -2,7 +2,7 @@
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 
-import { addDays, subDays, format } from 'date-fns';
+import { addDays, subDays } from 'date-fns';
 
 const DEGREE = "\u00B0";
 const FONT = "DejaVu Sans Mono";
@@ -105,6 +105,7 @@ function configSpeedAxis(speedAxis) {
     speedAxis.title.fontFamily = FONT;
     speedAxis.min = -20;
     speedAxis.max = 120;
+    speedAxis.strictMinMax = true;
     speedAxis.renderer.minGridDistance = 30;
 }
 
@@ -112,8 +113,9 @@ function configPercentAxis(percentAxis) {
     percentAxis.title.text = "Percent (%)";
     percentAxis.title.fontWeight = 700;
     percentAxis.title.fontFamily = FONT;
-    percentAxis.min = 0;
-    percentAxis.max = 100;
+    percentAxis.min = -5;
+    percentAxis.max = 105;
+    percentAxis.strictMinMax = true;
     percentAxis.renderer.minGridDistance = 30;
 }
 
@@ -123,6 +125,7 @@ function configTemperatureAxis(temperatureAxis) {
     temperatureAxis.title.fontFamily = FONT;
     //temperatureAxis.min = -30;
     //temperatureAxis.max = 40;
+    temperatureAxis.strictMinMax = true;
     temperatureAxis.renderer.minGridDistance = 30;
 }
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
-import theme from "@amcharts/amcharts4/themes/moonrisekingdom";
+import theme from "@amcharts/amcharts4/themes/animated";
 
 import configChart, { createCertain } from './chart/configChart';
 
@@ -48,7 +48,7 @@ const Chart = ({ location, dateRange }) => {
         return function cleanup() {
             chart.dispose();
         };
-    }, []);
+    }, [ location, dateRange ]);
 
     const weatherData = (weather) => {
 
