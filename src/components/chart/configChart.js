@@ -146,6 +146,18 @@ function configMaxDayTemperatureSeries(series) {
     //configTemperatureBullet(bullet);
 }
 
+function configTemperatureSeries(series) {
+    series.name = "Temperature";
+    series.dataFields.dateX = "date";
+    series.dataFields.valueY = "tempC";
+    series.tooltipText = "Temperature: {valueY.value} " + DEGREE + "C";
+    series.strokeWidth = 3;
+
+    series.minBulletDistance = 5;
+    let bullet = series.bullets.push(new am4charts.Bullet());
+    configCircleBullet(bullet);
+}
+
 function configDewPointSeries(series) {
     series.name = "Dew point";
     series.dataFields.dateX = "date";
@@ -159,10 +171,22 @@ function configDewPointSeries(series) {
 }
 
 function configHumiditySeries(series) {
-    series.name = "Relative humidity (%)";
+    series.name = "Relative humidity";
     series.dataFields.dateX = "date";
     series.dataFields.valueY = "Humidity";
     series.tooltipText = "Humidity: {valueY.value} %";
+    series.strokeWidth = 3;
+
+    series.minBulletDistance = 5;
+    let bullet = series.bullets.push(new am4charts.Bullet());
+    configCircleBullet(bullet);
+}
+
+function configCloudCoverSeries(series) {
+    series.name = "Cloud cover";
+    series.dataFields.dateX = "date";
+    series.dataFields.valueY = "cloudcover";
+    series.tooltipText = "Clouds: {valueY.value} %";
     series.strokeWidth = 3;
 
     series.minBulletDistance = 5;
@@ -222,9 +246,10 @@ const configChart = (chart, { startDate, endDate }) => {
     chart.colors.list = [
         am4core.color("blue"),
         am4core.color("red"),
+        am4core.color("#573fd1"),
         am4core.color("green"),
         am4core.color("#0384fc"),
-        am4core.color("magenta"),
+        am4core.color("#6f9ec9"),
         am4core.color("magenta"),
         am4core.color("white")
     ];
@@ -282,6 +307,11 @@ const configChart = (chart, { startDate, endDate }) => {
     //scrollbarX.series.push(series);
     //scrollbarY.series.push(series);
 
+    // Temperature
+    series = chart.series.push(new am4charts.LineSeries());
+    configTemperatureSeries(series);
+    series.yAxis = temperatureAxis;
+
     // Dew point
     series = chart.series.push(new am4charts.LineSeries());
     configDewPointSeries(series);
@@ -296,6 +326,12 @@ const configChart = (chart, { startDate, endDate }) => {
     scrollbarX.series.push(series);
     percentAxis.renderer.line.stroke = series.stroke;
     percentAxis.renderer.labels.template.fill = series.stroke;
+
+    // Cloud cover
+    series = chart.series.push(new am4charts.LineSeries());
+    configCloudCoverSeries(series);
+    series.yAxis = percentAxis;
+    scrollbarX.series.push(series);
     percentAxis.title.fill = series.stroke;
 
 /*

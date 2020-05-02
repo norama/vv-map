@@ -65,6 +65,7 @@ const Chart = ({ location, dateRange }) => {
                     date: millis,
                     DewPointC: hour.DewPointC,
                     Humidity: hour.humidity,
+                    cloudcover: hour.cloudcover,
                     WeatherPictogram: 2,
                     WindPictogram: 1,
                     weatherDesc: hour.weatherDesc.length ? hour.weatherDesc[0].value : '',
@@ -72,7 +73,8 @@ const Chart = ({ location, dateRange }) => {
                     winddirDegree: hour.winddirDegree,
                     windspeedKmph: hour.windspeedKmph,
                     mintempC: day.mintempC,
-                    maxtempC: day.maxtempC
+                    maxtempC: day.maxtempC,
+                    tempC: hour.tempC
                 };
                 data.push(item);
                 millis += THREE_HOURS;

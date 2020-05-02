@@ -22,6 +22,7 @@ Data:
 - temperature
 - [dew point](https://en.wikipedia.org/wiki/Dew_point)
 - [relative humidity](https://en.wikipedia.org/wiki/Relative_humidity)
+- cloud cover
 - wind (graph by speed with direction in arrow bullet)
 
 ## Usage
