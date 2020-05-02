@@ -57,7 +57,6 @@ const Location = ({ latlng, query, onChange }) => {
             suggestMinLength: 3,
             placeholder: "Search query or lat,lng"
         }).on('markgeocode', function(e) {
-            console.log('markgeocode', e.geocode);
 
             handleChange(e.geocode);
 
@@ -75,7 +74,6 @@ const Location = ({ latlng, query, onChange }) => {
         const searchInput = document.querySelector('.leaflet-control-geocoder-form input');
 
         const markGeocode = (result) => {
-            console.log('result', result);
             if (!result.bbox) {
                 result.bbox = L.latLngBounds(result.center, result.center);
             }

@@ -19,7 +19,6 @@ function byMonths(dateRange) {
 
 function fetchWeather(location, dateRange) {
     const dateRanges = byMonths(dateRange);
-    console.log('dateRanges', dateRanges);
 
     return Promise.all(dateRanges.map((dateRange) => (
         fetch(`${process.env.REACT_APP_WEATHER_URL}?key=${process.env.REACT_APP_WEATHER_KEY}` + '&' +

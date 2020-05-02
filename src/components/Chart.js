@@ -34,7 +34,6 @@ const Chart = ({ location, dateRange }) => {
         certain.show();
 
         fetchWeather(location, dateRange).then((weather) => {
-            console.log(weather);
 
             configChart(chart, dateRange);
 

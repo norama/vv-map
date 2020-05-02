@@ -76,7 +76,7 @@ function configDateAxis(dateAxis, startDate, endDate) {
     dateAxis.tooltipDateFormat = "MM-dd:HH";
 
     dateAxis.groupData = true;
-    dateAxis.groupCount = 500;
+    dateAxis.groupCount = 300;
     dateAxis.groupIntervals.setAll([
         { timeUnit: "hour", count: 1 },
         { timeUnit: "hour", count: 3 },
@@ -319,6 +319,7 @@ const configChart = (chart, { startDate, endDate }) => {
     series.yAxis = pictogramAxis2;
 */
     chart.legend = new am4charts.Legend();
+    chart.legend.reverseOrder = true;
     var markerTemplate = chart.legend.markers.template;
     markerTemplate.width = 40;
     markerTemplate.height = 40;

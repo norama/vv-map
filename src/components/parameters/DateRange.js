@@ -17,7 +17,6 @@ const DateRange = ({ startDate, endDate, onChange }) => {
     };
 
     const handleSelect = (item) => {
-        console.log(item.selection);
         onChange(item.selection);
     };
 
