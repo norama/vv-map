@@ -1,4 +1,48 @@
+# Historical weather chart
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Table of Contents
+
+- [Description](#description)
+- [Usage](#usage)
+- [Demo](#demo)
+- [Available Scripts](#available-scripts)
+  - [yarn start](#yarn-start)
+  - [yarn build](#yarn-run-build)
+- [Learn More](#learn-more)
+
+## Description
+
+This web application shows historical weather data using the [World Weather Online](https://www.worldweatheronline.com/developer/api/) servie for weather data and [amcharts 4](https://www.amcharts.com/docs/v4/) for display.
+
+## Usage
+
+Start the application locally with [yarn start](#yarn-start) or use the [Demo](#demo).
+By default, London weather is shown for March 2020.
+
+Zoom: use hte minichart at the top to zoom into a specific date interval, then you can move this interval by dragging the segment in the minichart.
+
+Specify shown data series: you can set which series are shown by clicking on the corresponding legend items on the right.
+
+You can set the location and date range parameters on the parameters page 
+(`Parameters` button in top-right corner or `<base URL>/parameters` URL in browser).
+
+Then weather data is shown on the main page 
+(`Show weather` button in top-right corner or `<base URL>/` URL in browser).
+
+Both the weather and the parameter page read location parameters from query string, e.g. it is
+`?lat=47.203&lng=12.261&startDate=2020-01-16&endDate=2020-04-30` for the default London March 2020 setting. There is an optional name parameter for display.
+
+Parameters:
+
+- `lat`, `lng`: location latitude, longitude coordinates, 3 digit precision is used
+- `startDate`, `endDate`: start and end dates, in `yyyy-MM-dd` format
+- `name`: display name
+
+## Demo
+
+[Demo]() is available [here]();.
 
 ## Available Scripts
 
@@ -11,11 +55,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
-
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
 ### `yarn build`
 
