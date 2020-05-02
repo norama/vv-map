@@ -16,3 +16,9 @@ class Params extends URLSearchParams {
 export function useQuery() {
     return new Params(useLocation().search);
 }
+
+const LONDON_NAME = 'London';
+
+export function defaultName(query) {
+    return query.get("lat") || query.get("lng") ? "" : LONDON_NAME;
+}

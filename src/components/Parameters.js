@@ -3,14 +3,14 @@ import { Redirect } from 'react-router';
 
 import { Button } from 'reactstrap';
 
-import { useQuery } from '../util/query';
+import { useQuery, defaultName } from '../util/query';
 
 import { dateString } from '../util/date';
 
 import DateRange from './parameters/DateRange';
 import Location from './parameters/Location';
 
-import { START_DATE, END_DATE, LONDON_LATLNG, LONDON_NAME } from './constants';
+import { START_DATE, END_DATE, LONDON_LATLNG } from './constants';
 
 import './Parameters.css';
 
@@ -24,7 +24,7 @@ const Parameters = () => {
     const endDate = new Date(query.get("endDate", END_DATE));
 
     const latlng = [ parseFloat(query.get("lat", LONDON_LATLNG.lat)), parseFloat(query.get("lng", LONDON_LATLNG.lng)) ];
-    const name = query.get('name', LONDON_NAME);
+    const name = query.get('name', defaultName(query));
 
     const [ dateRange, setDateRange ] = useState({
         startDate,

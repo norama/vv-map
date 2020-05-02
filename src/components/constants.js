@@ -6,4 +6,3 @@ export const LONDON_LATLNG = {
     lat: '51.533',
     lng: '-0.129'
 };
-export const LONDON_NAME = 'London';
