@@ -36,7 +36,7 @@ const Location = ({ latlng, query, onChange }) => {
             zoom: 16,
             zoomControl: false,
             layers: [
-                L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                     maxZoom: 17,
                     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 }),
