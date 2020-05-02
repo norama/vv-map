@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "b698c8c9b802af432dca82b88e33427f",
+    "revision": "5179b740dd9f69634597c63193985fef",
     "url": "/vv-map/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/vv-map/static/css/3.b05568b4.chunk.css"
   },
   {
-    "revision": "b4e1b4b8d96fcdc9c98f",
+    "revision": "36dad697acd9b1fdcc4a",
     "url": "/vv-map/static/css/main.b8a8bc37.chunk.css"
   },
   {
@@ -40,8 +40,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/vv-map/static/js/6.5946f999.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "b4e1b4b8d96fcdc9c98f",
-    "url": "/vv-map/static/js/main.5b92f387.chunk.js"
+    "revision": "36dad697acd9b1fdcc4a",
+    "url": "/vv-map/static/js/main.df06420b.chunk.js"
   },
   {
     "revision": "e94723a802ce2a99d1af",
