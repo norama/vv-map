@@ -27,6 +27,7 @@
 }
 
 .__DateRange__ .change {
-    margin-left: 40px;
+    margin: 5px 0 25px 40px;
     width: 150px;
+    font-weight: 600;
 }

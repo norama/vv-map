@@ -5,4 +5,5 @@
 .__Parameters__ .weather-button .button {
     margin: 15px 20px 15px auto;
     width: 200px;
+    font-weight: 600;
 }

@@ -3,7 +3,8 @@
 }
 
 .__Weather__ .weather-info {
-    margin: 10px 20px 5px 20px;
+    margin: 15px 20px 5px 20px;
+    height: 50px;
 }
 
 .__Weather__ .weather-info h5 {
@@ -26,6 +27,7 @@
     margin-left: auto;
     width: 200px;
     height: 40px;
+    font-weight: 600;
 }
 
 .__Weather__ .weather-reference {

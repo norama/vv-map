@@ -300,20 +300,21 @@ const configChart = (chart, { startDate, endDate }) => {
     let series = chart.series.push(new am4charts.StepLineSeries());
     configMinDayTemperatureSeries(series);
     series.yAxis = temperatureAxis;
-    //scrollbarX.series.push(series);
+    scrollbarX.series.push(series);
     //scrollbarY.series.push(series);
 
     // Max. day temperature
     series = chart.series.push(new am4charts.StepLineSeries());
     configMaxDayTemperatureSeries(series);
     series.yAxis = temperatureAxis;
-    //scrollbarX.series.push(series);
+    scrollbarX.series.push(series);
     //scrollbarY.series.push(series);
 
     // Temperature
     series = chart.series.push(new am4charts.LineSeries());
     configTemperatureSeries(series);
     series.yAxis = temperatureAxis;
+    scrollbarX.series.push(series);
 
     // Dew point
     series = chart.series.push(new am4charts.LineSeries());
@@ -326,7 +327,7 @@ const configChart = (chart, { startDate, endDate }) => {
     series = chart.series.push(new am4charts.LineSeries());
     configHumiditySeries(series);
     series.yAxis = percentAxis;
-    scrollbarX.series.push(series);
+    //scrollbarX.series.push(series);
     percentAxis.renderer.line.stroke = series.stroke;
     percentAxis.renderer.labels.template.fill = series.stroke;
 
@@ -334,7 +335,7 @@ const configChart = (chart, { startDate, endDate }) => {
     series = chart.series.push(new am4charts.LineSeries());
     configCloudCoverSeries(series);
     series.yAxis = percentAxis;
-    scrollbarX.series.push(series);
+    //scrollbarX.series.push(series);
     percentAxis.title.fill = series.stroke;
 
 /*
