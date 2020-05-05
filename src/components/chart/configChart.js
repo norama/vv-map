@@ -237,7 +237,11 @@ export function createCertain(chart) {
     return certain;
 }
 
-const configChart = (chart, { startDate, endDate }) => {
+export function configDateRange(chart, dateRange) {
+    configDateAxis(chart.xAxes.getIndex(0), dateRange.startDate, dateRange.endDate);
+}
+
+const configChart = (chart) => {
 
     chart.leftAxesContainer.layout = "vertical";
     chart.rightAxesContainer.layout = "vertical";
@@ -257,8 +261,7 @@ const configChart = (chart, { startDate, endDate }) => {
         am4core.color("white")
     ];
 
-    let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-    configDateAxis(dateAxis, startDate, endDate);
+    chart.xAxes.push(new am4charts.DateAxis());
 /*
     let pictogramAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configPictogramAxis(pictogramAxis);

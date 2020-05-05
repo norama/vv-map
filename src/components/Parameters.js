@@ -3,37 +3,30 @@ import { Redirect } from 'react-router';
 
 import { Button } from 'reactstrap';
 
-import { useQuery, defaultName } from '../util/query';
-
 import { dateString } from '../util/date';
 
 import DateRange from './parameters/DateRange';
 import Location from './parameters/Location';
 
-import { START_DATE, END_DATE, LONDON_LATLNG } from './constants';
-
 import './Parameters.css';
 
+const Parameters = ({ location, dateRange, name }) => {
 
-const Parameters = () => {
-    const [ weather, setWeather ] = useState(false);
+    const startDate = new Date(dateRange.startDate);
+    const endDate = new Date(dateRange.endDate);
 
-    const query = useQuery();
+    const latlng = [ parseFloat(location.lat), parseFloat(location.lng) ];
 
-    const startDate = new Date(query.get("startDate", START_DATE));
-    const endDate = new Date(query.get("endDate", END_DATE));
-
-    const latlng = [ parseFloat(query.get("lat", LONDON_LATLNG.lat)), parseFloat(query.get("lng", LONDON_LATLNG.lng)) ];
-    const name = query.get('name', defaultName(query));
-
-    const [ dateRange, setDateRange ] = useState({
+    const [ newDateRange, setNewDateRange ] = useState({
         startDate,
         endDate
     });
-    const [ location, setLocation ] = useState({
+    const [ newLocation, setNewLocation ] = useState({
         latlng,
         name
     });
+
+    const [ weather, setWeather ] = useState(false);
 
     const handleWeatherClick = () => {
         setWeather(true);
@@ -41,19 +34,19 @@ const Parameters = () => {
 
     return weather ? (
         <Redirect to={'/?' +
-            `lat=${location.latlng[0].toFixed(3)}` + '&' +
-            `lng=${location.latlng[1].toFixed(3)}` + '&' +
-            `name=${location.name}` + '&' +
-            `startDate=${dateString(dateRange.startDate)}` + '&' +
-            `endDate=${dateString(dateRange.endDate)}`
+            `lat=${newLocation.latlng[0].toFixed(3)}` + '&' +
+            `lng=${newLocation.latlng[1].toFixed(3)}` + '&' +
+            `name=${newLocation.name}` + '&' +
+            `startDate=${dateString(newDateRange.startDate)}` + '&' +
+            `endDate=${dateString(newDateRange.endDate)}`
         } />
     ) : (
         <div className="__Parameters__">
             <div className="weather-button">
-                <DateRange startDate={dateRange.startDate} endDate={dateRange.endDate} onChange={setDateRange} />
+                <DateRange startDate={newDateRange.startDate} endDate={newDateRange.endDate} onChange={setNewDateRange} />
                 <Button color="primary" className="button" onClick={handleWeatherClick}>Show Weather</Button>
             </div>
-            <Location latlng={latlng} query={name} onChange={setLocation} />
+            <Location latlng={newLocation.latlng} query={newLocation.name} onChange={setNewLocation} />
         </div>
     );
 };

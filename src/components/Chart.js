@@ -4,7 +4,7 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import theme from "@amcharts/amcharts4/themes/animated";
 
-import configChart, { createCertain } from './chart/configChart';
+import configChart, { createCertain, configDateRange } from './chart/configChart';
 
 import fetchWeather from '../api/fetchWeather';
 
@@ -23,19 +23,42 @@ function formatTime(date, hour) {
     return new Date(date + ' ' + hour.substring(0, hour.length-2) + ':00');
 }
 
+let chart = null;
+let certain = null;
+
+const ChartDiv = () => (
+    <div id="chartdiv" className="chart"></div>
+);
+
 const Chart = ({ location, dateRange }) => {
 
     const [ loading, setLoading ] = useState(true);
 
     useEffect(() => {
-        let chart = am4core.create("chartdiv", am4charts.XYChart);
+        window.onbeforeunload = function(event) {
+            if (chart) {
+                chart.dispose();
+            }
+        };
+    }, []);
 
-        const certain = createCertain(chart);
-        certain.show();
+    useEffect(() => {
+        if (!location || !dateRange) {
+            return;
+        }
+
+        if (chart === null) {
+            chart = am4core.create("chartdiv", am4charts.XYChart);
+            certain = createCertain(chart);
+            certain.show();
+            configChart(chart);
+        } else {
+            certain.show();
+        }
 
         fetchWeather(location, dateRange).then((weather) => {
 
-            configChart(chart, dateRange);
+            configDateRange(chart, dateRange);
 
             chart.data = weatherData(weather);
 
@@ -43,11 +66,9 @@ const Chart = ({ location, dateRange }) => {
                 certain.hide();
                 setLoading(false);
             }, 1000);
+
         });
 
-        return function cleanup() {
-            chart.dispose();
-        };
     }, [ location, dateRange ]);
 
     const weatherData = (weather) => {
@@ -87,7 +108,7 @@ const Chart = ({ location, dateRange }) => {
     return (
         <div className="__Chart__">
             <Loader loading={loading} />
-            <div id="chartdiv" className="chart"></div>
+            <ChartDiv />
         </div>
     );
 };
