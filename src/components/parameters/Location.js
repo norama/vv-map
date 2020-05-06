@@ -33,8 +33,8 @@ const Location = ({ latlng, query, onChange }) => {
         // create map
         const map = L.map('map', {
             center: latlng,
-            zoom: 16,
             zoomControl: false,
+            zoom: 8,
             layers: [
                 L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                     maxZoom: 17,
@@ -46,6 +46,8 @@ const Location = ({ latlng, query, onChange }) => {
                 })
             ]
         });
+
+        map.zoomOut();
 
         L.control.zoom({
             position:'topright'
