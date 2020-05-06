@@ -109,12 +109,12 @@ function configSpeedAxis(speedAxis) {
     speedAxis.renderer.minGridDistance = 30;
 }
 
-function configPercentAxis(percentAxis) {
+export function configPercentAxis(percentAxis) {
     percentAxis.title.text = "Percent (%)";
     percentAxis.title.fontWeight = 700;
     percentAxis.title.fontFamily = FONT;
-    percentAxis.min = -5;
-    percentAxis.max = 105;
+    percentAxis.min = -10;
+    percentAxis.max = 110;
     percentAxis.strictMinMax = true;
     percentAxis.renderer.minGridDistance = 30;
 }

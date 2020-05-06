@@ -4,7 +4,7 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import theme from "@amcharts/amcharts4/themes/animated";
 
-import configChart, { createCertain, configDateRange } from './chart/configChart';
+import configChart, { createCertain, configDateRange, configPercentAxis } from './chart/configChart';
 
 import fetchWeather from '../api/fetchWeather';
 
@@ -26,13 +26,9 @@ function formatTime(date, hour) {
 let chart = null;
 let certain = null;
 
-const ChartDiv = () => (
-    <div id="chartdiv" className="chart"></div>
-);
-
 const Chart = ({ location, dateRange }) => {
 
-    const [ loading, setLoading ] = useState(true);
+    const [ loading, setLoading ] = useState(false);
 
     useEffect(() => {
         window.onbeforeunload = function(event) {
@@ -47,26 +43,44 @@ const Chart = ({ location, dateRange }) => {
             return;
         }
 
+        setLoading(true);
+
         if (chart === null) {
             chart = am4core.create("chartdiv", am4charts.XYChart);
             certain = createCertain(chart);
+
             certain.show();
+
             configChart(chart);
+            configDateRange(chart, dateRange);
+
+            // workaround to display axis ranges properly
+            chart.events.on("datavalidated", function () {
+                const percentAxis = chart.yAxes.getIndex(0);
+                percentAxis.zoomToValues(percentAxis.min + 1, percentAxis.max - 1);
+
+                const speedAxis = chart.yAxes.getIndex(3);
+                speedAxis.zoomToValues(speedAxis.min + 1, speedAxis.max - 1);
+            });
+
         } else {
+
             certain.show();
+
+            configDateRange(chart, dateRange);
         }
 
         fetchWeather(location, dateRange).then((weather) => {
 
-            configDateRange(chart, dateRange);
-
             chart.data = weatherData(weather);
+            chart.invalidateData();
 
             setTimeout(() => {
-                certain.hide();
-                setLoading(false);
-            }, 1000);
 
+                setLoading(false);
+                certain.hide();
+
+            }, 1000);
         });
 
     }, [ location, dateRange ]);
@@ -108,7 +122,7 @@ const Chart = ({ location, dateRange }) => {
     return (
         <div className="__Chart__">
             <Loader loading={loading} />
-            <ChartDiv />
+            <div id="chartdiv" className="chart"></div>
         </div>
     );
 };

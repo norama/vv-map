@@ -28,10 +28,17 @@ function fetchWeather(location, dateRange) {
         ).then((response) => (response.json()))
     ))).then((responses) => (
         responses.reduce((acc, response) => {
-            acc.push(...response.data.weather);
+            if (response.data.weather) {
+                acc.push(...response.data.weather);
+            } else if (response.data.error) {
+                console.error(response.data.error);
+            }
             return acc;
         }, [])
-    ));
+    )).catch((error) => {
+        console.error(error);
+        return [];
+    });
 }
 
 export default fetchWeather;

@@ -25,7 +25,7 @@ const Main = () => {
                     <WeatherPage setChartParams={setChartParams} />
                 </Route>
             </Switch>
-            <div style={chartParams ? { display: "block" } : { display: "none" }}>
+            <div style={chartParams.location ? { display: "block" } : { display: "none" }}>
                 <Chart location={chartParams.location} dateRange={chartParams.dateRange} />
             </div>
         </Router>  
