@@ -34,7 +34,7 @@ const Location = ({ latlng, query, onChange }) => {
         const map = L.map('map', {
             center: latlng,
             zoomControl: false,
-            zoom: 8,
+            zoom: 7,
             layers: [
                 L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                     maxZoom: 17,
@@ -47,7 +47,7 @@ const Location = ({ latlng, query, onChange }) => {
             ]
         });
 
-        map.zoomOut();
+        //map.zoomOut();
 
         L.control.zoom({
             position:'topright'
@@ -117,7 +117,6 @@ const Location = ({ latlng, query, onChange }) => {
 
         setTimeout(() => {
             geocoderControl._expand();
-
         }, 500);
     }, []);
 

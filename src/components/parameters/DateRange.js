@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { DateRangePicker } from 'react-date-range';
 import { format } from 'date-fns';
 
@@ -32,6 +32,7 @@ const DateRange = ({ startDate, endDate, onChange, popoverOpen, onTogglePopover 
                         months={2}
                         direction="horizontal"
                         ranges={[{ startDate, endDate, key: 'selection' }]}
+                        staticRanges={[]}
                         onChange={handleSelect}
                     />
                 </PopoverBody>

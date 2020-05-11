@@ -31,3 +31,13 @@
     width: 150px;
     font-weight: 600;
 }
+.rdrCalendarWrapper {
+    border: 2px solid #6C757D;
+}
+.rdrDefinedRangesWrapper {
+    display: none !important;
+}
+.popover-inner, .popover-body {
+    border: none !important;
+    padding: 0 !important;
+}

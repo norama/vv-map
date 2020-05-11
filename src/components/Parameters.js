@@ -31,7 +31,7 @@ const Parameters = ({ location, dateRange, name }) => {
     const handleTogglePopover = () => {
         setState((state) => ({
             weather: false,
-            popoverOpen: !state.popverOpen
+            popoverOpen: !state.popoverOpen
         }));
     };
 

@@ -14,7 +14,7 @@ const Weather = ({ location, dateRange, name }) => {
 
     useEffect(() => {
         setParameters(false);
-    });
+    }, [ location, dateRange, name ]);
 
     const handleParameters = () => {
         setParameters(true);
