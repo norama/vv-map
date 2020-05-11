@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router';
 
 import { Button } from 'reactstrap';
@@ -26,28 +26,53 @@ const Parameters = ({ location, dateRange, name }) => {
         name
     });
 
-    const [ weather, setWeather ] = useState(false);
+    const [ state, setState ] = useState({ weather: false, popoverOpen: false });
 
-    const handleWeatherClick = () => {
-        setWeather(true);
+    const handleTogglePopover = () => {
+        setState((state) => ({
+            weather: false,
+            popoverOpen: !state.popverOpen
+        }));
+    };
+
+    useEffect(() => {
+        setState({
+            weather: false,
+            popoverOpen: false
+        });
+    }, [ location, dateRange, name ]);
+
+    const handleWeather = () => {
+        setState({
+            weather: true,
+            popoverOpen: false
+        });
     }
 
-    return weather ? (
-        <Redirect to={'/?' +
-            `lat=${newLocation.latlng[0].toFixed(3)}` + '&' +
-            `lng=${newLocation.latlng[1].toFixed(3)}` + '&' +
-            `name=${newLocation.name}` + '&' +
-            `startDate=${dateString(newDateRange.startDate)}` + '&' +
-            `endDate=${dateString(newDateRange.endDate)}`
-        } />
-    ) : (
-        <div className="__Parameters__">
-            <div className="weather-button">
-                <DateRange startDate={newDateRange.startDate} endDate={newDateRange.endDate} onChange={setNewDateRange} />
-                <Button color="primary" className="button" onClick={handleWeatherClick}>Show Weather</Button>
+    return (
+        <>
+            { state.weather ?
+                <Redirect to={'/?' +
+                    `lat=${newLocation.latlng[0].toFixed(3)}` + '&' +
+                    `lng=${newLocation.latlng[1].toFixed(3)}` + '&' +
+                    `name=${newLocation.name}` + '&' +
+                    `startDate=${dateString(newDateRange.startDate)}` + '&' +
+                    `endDate=${dateString(newDateRange.endDate)}`}
+                /> : null }
+            <div className="__Parameters__">
+                <div className="weather-button">
+                    <DateRange
+                        startDate={newDateRange.startDate}
+                        endDate={newDateRange.endDate}
+                        onChange={setNewDateRange}
+                        popoverOpen={state.popoverOpen}
+                        onTogglePopover={handleTogglePopover}
+                    />
+                    <Button color="primary" className="button" onClick={handleWeather}>Show Weather</Button>
+                </div>
+                <Location latlng={newLocation.latlng} query={newLocation.name} onChange={setNewLocation} />
             </div>
-            <Location latlng={newLocation.latlng} query={newLocation.name} onChange={setNewLocation} />
-        </div>
+        </>
     );
 };
 

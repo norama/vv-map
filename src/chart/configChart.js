@@ -86,6 +86,8 @@ function configDateAxis(dateAxis, startDate, endDate) {
         { timeUnit: "year", count: 1 },
         { timeUnit: "year", count: 10 }
     ]);
+
+    dateAxis.zoomToDates(dateAxis.min, dateAxis.max);
 }
 
 function configPictogramAxis(pictogramAxis) {
@@ -109,7 +111,7 @@ function configSpeedAxis(speedAxis) {
     speedAxis.renderer.minGridDistance = 30;
 }
 
-export function configPercentAxis(percentAxis) {
+function configPercentAxis(percentAxis) {
     percentAxis.title.text = "Percent (%)";
     percentAxis.title.fontWeight = 700;
     percentAxis.title.fontFamily = FONT;
@@ -231,7 +233,7 @@ function configWindSpeedSeries(series) {
 export function createCertain(chart) {
     let certain = chart.tooltipContainer.createChild(am4core.Container);
     certain.background.fill = am4core.color("#fff");
-    certain.background.fillOpacity = 0.9;
+    certain.background.fillOpacity = 1;
     certain.width = am4core.percent(100);
     certain.height = am4core.percent(100);
     return certain;

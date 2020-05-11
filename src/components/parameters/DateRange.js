@@ -8,13 +8,7 @@ import './DateRange.css';
 
 const DATE_FORMAT = "MMM d, yyyy";
 
-const DateRange = ({ startDate, endDate, onChange }) => {
-
-    const [popoverOpen, setPopoverOpen] = useState(false);
-
-    const toggle = () => {
-        setPopoverOpen((open) => (!open));
-    };
+const DateRange = ({ startDate, endDate, onChange, popoverOpen, onTogglePopover }) => {
 
     const handleSelect = (item) => {
         onChange(item.selection);
@@ -29,7 +23,7 @@ const DateRange = ({ startDate, endDate, onChange }) => {
                     <Button outline={!popoverOpen} color="secondary" className="change">{popoverOpen ? "Done" : "Change"}</Button>
                 </div>
             </div>
-            <Popover placement="bottom" isOpen={popoverOpen} target="popover" toggle={toggle}>
+            <Popover placement="bottom" isOpen={popoverOpen} target="popover" toggle={onTogglePopover}>
                 <PopoverBody>
                     <DateRangePicker
                         showSelectionPreview={true}

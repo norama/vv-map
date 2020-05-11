@@ -4,7 +4,8 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import theme from "@amcharts/amcharts4/themes/animated";
 
-import configChart, { createCertain, configDateRange, configPercentAxis } from './chart/configChart';
+import configChart, { createCertain, configDateRange } from '../chart/configChart';
+import { resetChart } from '../chart/manageChart';
 
 import fetchWeather from '../api/fetchWeather';
 
@@ -26,64 +27,62 @@ function formatTime(date, hour) {
 let chart = null;
 let certain = null;
 
+window.onbeforeunload = function(event) {
+    if (chart) {
+        chart.dispose();
+        chart = null;
+    }
+};
+
 const Chart = ({ location, dateRange }) => {
 
     const [ loading, setLoading ] = useState(false);
-
-    useEffect(() => {
-        window.onbeforeunload = function(event) {
-            if (chart) {
-                chart.dispose();
-            }
-        };
-    }, []);
 
     useEffect(() => {
         if (!location || !dateRange) {
             return;
         }
 
-        setLoading(true);
+        console.log('location: [' + location.lat + ', ' + location.lng + '], dateRange: ' + dateRange.startDate + ' - ' + dateRange.endDate);
 
         if (chart === null) {
+            console.log('---> CREATING CHART')
             chart = am4core.create("chartdiv", am4charts.XYChart);
             certain = createCertain(chart);
 
-            certain.show();
-
             configChart(chart);
-            configDateRange(chart, dateRange);
+            //configDateRange(chart, dateRange);
 
-            // workaround to display axis ranges properly
             chart.events.on("datavalidated", function () {
-                const percentAxis = chart.yAxes.getIndex(0);
-                percentAxis.zoomToValues(percentAxis.min + 1, percentAxis.max - 1);
-
-                const speedAxis = chart.yAxes.getIndex(3);
-                speedAxis.zoomToValues(speedAxis.min + 1, speedAxis.max - 1);
+                certain.hide();
             });
 
-        } else {
-
-            certain.show();
-
-            configDateRange(chart, dateRange);
         }
 
+        certain.show();
+        setLoading(true);
+
         fetchWeather(location, dateRange).then((weather) => {
-
+            if (chart === null) {
+                return;
+            }
+            resetChart(chart, dateRange);
             chart.data = weatherData(weather);
+        }).catch((error) => {
+            if (chart === null) {
+                return;
+            }
+            resetChart(chart, dateRange);
+            chart.data = [];
+
+            alert(error);
+        }).finally(() => {
+            setLoading(false);
             chart.invalidateData();
-
-            setTimeout(() => {
-
-                setLoading(false);
-                certain.hide();
-
-            }, 1000);
+            //certain.hide();
         });
 
-    }, [ location, dateRange ]);
+    }, [ location.lat, location.lng, dateRange.startDate, dateRange.endDate ]);
 
     const weatherData = (weather) => {
 

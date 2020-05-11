@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
     HashRouter as Router,
-    Switch,
     Route
 } from "react-router-dom";
 
@@ -9,47 +8,43 @@ import { useQueryParams } from './util/query';
 
 import Weather from './components/Weather';
 import Parameters from './components/Parameters';
-import Chart from './components/Chart';
 
 const Main = () => {
 
-    const [ chartParams, setChartParams ] = useState({ location: null, dateRange: null });
-
     return (
         <Router basename='/'>
-            <Switch>
-                <Route path="/parameters" >
-                    <ParametersPage setChartParams={setChartParams} />
-                </Route>
-                <Route path="/" >
-                    <WeatherPage setChartParams={setChartParams} />
-                </Route>
-            </Switch>
-            <div style={chartParams.location ? { display: "block" } : { display: "none" }}>
-                <Chart location={chartParams.location} dateRange={chartParams.dateRange} />
+            <div>
+                <Route path="/parameters" exact children={({ match, ...rest }) => (
+                    <ShowOnMatch match={match}>
+                        <ParametersPage {...rest} />
+                    </ShowOnMatch>
+                )} />
+                <Route path="/" exact children={({ match, ...rest }) => (
+                    <ShowOnMatch match={match}>
+                        <WeatherPage {...rest} />
+                    </ShowOnMatch>
+                )} />
             </div>
-        </Router>  
+        </Router>
     );
 };
 
-const ParametersPage = ({ setChartParams }) => {
-    const queryParams = useQueryParams();
+const ShowOnMatch = ({ match, children }) => (
+    <div style={ match ? { display: "block" } : { display: "none" }}>
+        {children}
+    </div>
+);
 
-    useEffect(() => {
-        setChartParams({ location: null, dateRange: null });
-    }, []);
+const ParametersPage = () => {
+    const queryParams = useQueryParams();
 
     return (
         <Parameters {...queryParams} />
     );
 };
 
-const WeatherPage = ({ setChartParams }) => {
+const WeatherPage = () => {
     const queryParams = useQueryParams();
-
-    useEffect(() => {
-        setChartParams(queryParams);
-    }, []);
 
     return (
         <Weather {...queryParams} />

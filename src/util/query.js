@@ -45,3 +45,14 @@ export function useQueryParams() {
         name: query.get("name", defaultName(query))
     };
 };
+
+function get(p, field) {
+    return p && p[field] ? p[field] : null;
+}
+
+export function equals(p1, p2) {
+    return get(p1.location, 'lat') === get(p2.location, 'lat') &&
+        get(p1.location, 'lng') === get(p2.location, 'lng') &&
+        get(p1.dateRange, 'startDate') === get(p2.dateRange, 'startDate') &&
+        get(p1.dateRange, 'endDate') === get(p2.dateRange, 'endDate');
+}
