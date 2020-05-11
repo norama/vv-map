@@ -31,14 +31,13 @@ function fetchWeather(location, dateRange) {
             if (response.data.weather) {
                 acc.push(...response.data.weather);
             } else if (response.data.error) {
-                console.error(response.data.error);
+                const error = response.data.error;
+                console.error(error);
+                throw error;
             }
             return acc;
         }, [])
-    )).catch((error) => {
-        console.error(error);
-        throw error;
-    });
+    ));
 }
 
 export default fetchWeather;

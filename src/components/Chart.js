@@ -43,7 +43,7 @@ const Chart = ({ location, dateRange }) => {
             return;
         }
 
-        console.log('location: [' + location.lat + ', ' + location.lng + '], dateRange: ' + dateRange.startDate + ' - ' + dateRange.endDate);
+        // console.log('location: [' + location.lat + ', ' + location.lng + '], dateRange: ' + dateRange.startDate + ' - ' + dateRange.endDate);
 
         if (chart === null) {
             console.log('---> CREATING CHART')
@@ -54,6 +54,7 @@ const Chart = ({ location, dateRange }) => {
             //configDateRange(chart, dateRange);
 
             chart.events.on("datavalidated", function () {
+                setLoading(false);
                 certain.hide();
             });
 
@@ -75,9 +76,9 @@ const Chart = ({ location, dateRange }) => {
             resetChart(chart, dateRange);
             chart.data = [];
 
-            alert(error);
+            alert(JSON.stringify(error));
         }).finally(() => {
-            setLoading(false);
+            //setLoading(false);
             chart.invalidateData();
             //certain.hide();
         });
