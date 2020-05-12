@@ -9,13 +9,28 @@ import { useQueryParams } from './util/query';
 import Weather from './components/Weather';
 import Parameters from './components/Parameters';
 
+let key = 0;
+
+// workaround for leaflet map init:
+// create map when it is first shown with display: block,
+// ignore mini-map created initially with diaply: none
+function getParametersKey(match) {
+    if (key) {
+        return key;
+    }
+    if (match) {
+        key = 1;
+    }
+    return key;
+}
+
 const Main = () => {
 
     return (
         <Router basename='/'>
             <div>
                 <Route path="/parameters" exact children={({ match, ...rest }) => (
-                    <ShowOnMatch match={match}>
+                    <ShowOnMatch key={getParametersKey(match)} match={match}>
                         <ParametersPage {...rest} />
                     </ShowOnMatch>
                 )} />

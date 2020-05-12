@@ -30,22 +30,29 @@ const Location = ({ latlng, query, onChange }) => {
             onChange({ latlng: [result.center.lat, result.center.lng], name: result.name });
         };
 
+        // console.log("----------------------> CREATING MAP");
+
         // create map
         const map = L.map('map', {
             center: latlng,
             zoomControl: false,
             zoom: 13,
+            maxZoom: 18,
             layers: [
                 L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                    maxZoom: 17,
+                    zoom: 13,
+                    maxZoom: 18,
                     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 }),
                 L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 17,
+                    zoom: 13,
+                    maxZoom: 18,
                     attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
                 })
             ]
         });
+
+        map.zoomOut();
 
         L.control.zoom({
             position:'topright'

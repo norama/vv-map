@@ -46,7 +46,7 @@ const Chart = ({ location, dateRange }) => {
         // console.log('location: [' + location.lat + ', ' + location.lng + '], dateRange: ' + dateRange.startDate + ' - ' + dateRange.endDate);
 
         if (chart === null) {
-            console.log('---> CREATING CHART')
+            // console.log('---> CREATING CHART')
             chart = am4core.create("chartdiv", am4charts.XYChart);
             certain = createCertain(chart);
 
