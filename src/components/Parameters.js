@@ -28,10 +28,21 @@ const Parameters = ({ location, dateRange, name }) => {
 
     const [ state, setState ] = useState({ weather: false, popoverOpen: false });
 
-    const handleTogglePopover = () => {
+    const handleTogglePopover = (e) => {
+        e.stopPropagation();
+
         setState((state) => ({
             weather: false,
             popoverOpen: !state.popoverOpen
+        }));
+    };
+
+    const handleClosePopover = (e) => {
+        e.stopPropagation();
+
+        setState((state) => ({
+            weather: false,
+            popoverOpen: false
         }));
     };
 
@@ -42,7 +53,9 @@ const Parameters = ({ location, dateRange, name }) => {
         });
     }, [ location, dateRange, name ]);
 
-    const handleWeather = () => {
+    const handleWeather = (e) => {
+        e.stopPropagation();
+
         setState({
             weather: true,
             popoverOpen: false
@@ -59,7 +72,7 @@ const Parameters = ({ location, dateRange, name }) => {
                     `startDate=${dateString(newDateRange.startDate)}` + '&' +
                     `endDate=${dateString(newDateRange.endDate)}`}
                 /> : null }
-            <div className="__Parameters__">
+            <div className="__Parameters__" onClick={handleClosePopover}>
                 <div className="weather-button">
                     <DateRange
                         startDate={newDateRange.startDate}

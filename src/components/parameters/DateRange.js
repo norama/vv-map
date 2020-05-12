@@ -6,7 +6,11 @@ import { Button, Popover, PopoverBody } from 'reactstrap';
 
 import './DateRange.css';
 
-const DATE_FORMAT = "MMM d, yyyy";
+const DATE_FORMAT = "MMM d";
+
+function preventEventPropagation(e) {
+    e.stopPropagation();
+}
 
 const DateRange = ({ startDate, endDate, onChange, popoverOpen, onTogglePopover }) => {
 
@@ -24,7 +28,7 @@ const DateRange = ({ startDate, endDate, onChange, popoverOpen, onTogglePopover 
                 </div>
             </div>
             <Popover placement="bottom" isOpen={popoverOpen} target="popover" toggle={onTogglePopover}>
-                <PopoverBody>
+                <PopoverBody onClick={preventEventPropagation}>
                     <DateRangePicker
                         showSelectionPreview={true}
                         moveRangeOnFirstSelection={false}
