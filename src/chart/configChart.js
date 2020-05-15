@@ -236,10 +236,12 @@ function configVisibilitySeries(series) {
     series.dataFields.valueY = "visibility";
     series.tooltipText = "Visibility: {visibility} km";
     series.strokeWidth = 3;
-
+    series.strokeOpacity = 0.8;
+/*
     series.minBulletDistance = 5;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
+*/
 }
 
 export function createCertain(chart) {
@@ -255,7 +257,7 @@ export function configDateRange(chart, dateRange) {
     configDateAxis(chart.xAxes.getIndex(0), dateRange.startDate, dateRange.endDate);
 }
 
-const configChart = (chart) => {
+export const configDataChart = (chart) => {
 
     chart.leftAxesContainer.layout = "vertical";
     chart.rightAxesContainer.layout = "vertical";
@@ -397,4 +399,66 @@ const configChart = (chart) => {
     //chart.scrollbarY = scrollbarY;
 };
 
-export default configChart;
+function configCalcAxis(calcAxis) {
+    calcAxis.title.text = "Calc";
+    calcAxis.title.fontWeight = 700;
+    calcAxis.title.fontFamily = FONT;
+    //calcAxis.min = -10;
+    //calcAxis.max = 110;
+    //calcAxis.strictMinMax = true;
+    calcAxis.renderer.minGridDistance = 30;
+}
+
+function configCalcSeries(series) {
+    series.name = "Calc";
+    series.dataFields.dateX = "date";
+    series.dataFields.valueY = "calc";
+    series.tooltipText = "Calc: {calc}";
+    series.strokeWidth = 3;
+
+    series.minBulletDistance = 5;
+    let bullet = series.bullets.push(new am4charts.Bullet());
+    configCircleBullet(bullet);
+}
+
+export const configCalcChart = (chart) => {
+
+    chart.preloader.disabled = true;
+
+    chart.paddingRight = 30;
+
+    chart.colors.list = [
+        am4core.color("orange")
+    ];
+
+    chart.xAxes.push(new am4charts.DateAxis());
+
+    let calcAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    configCalcAxis(calcAxis);
+    calcAxis.marginTop = 10;
+    calcAxis.marginBottom = 10;
+    let scrollbarX = new am4charts.XYChartScrollbar();
+    let scrollbarY = new am4charts.XYChartScrollbar();
+
+    // Calc
+    let series = chart.series.push(new am4charts.LineSeries());
+    configCalcSeries(series);
+    series.yAxis = calcAxis;
+    scrollbarX.series.push(series);
+    scrollbarY.series.push(series);
+
+    chart.legend = new am4charts.Legend();
+    chart.legend.reverseOrder = true;
+    var markerTemplate = chart.legend.markers.template;
+    markerTemplate.width = 40;
+    markerTemplate.height = 40;
+    //chart.legend.position = "right";
+    chart.legend.labels.template.fontSize = 12;
+    chart.legend.labels.template.fontWeight = 500;
+    chart.legend.labels.template.fontFamily = FONT;
+
+    chart.cursor = new am4charts.XYCursor();
+
+    chart.scrollbarX = scrollbarX;
+    chart.scrollbarY = scrollbarY;
+};

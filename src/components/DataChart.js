@@ -4,7 +4,7 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import theme from "@amcharts/amcharts4/themes/animated";
 
-import configChart, { createCertain, configDateRange } from '../chart/configChart';
+import { configDataChart, createCertain } from '../chart/configChart';
 import { resetChart } from '../chart/manageChart';
 
 import fetchWeather from '../api/fetchWeather';
@@ -13,7 +13,7 @@ import Loader from './Loader';
 
 import './Chart.css';
 
-am4core.useTheme(theme);
+//am4core.useTheme(theme);
 
 const THREE_HOURS = 3 * 3600000;
 
@@ -34,7 +34,7 @@ window.onbeforeunload = function(event) {
     }
 };
 
-const Chart = ({ location, dateRange }) => {
+const DataChart = ({ location, dateRange, onDataLoaded }) => {
 
     const [ loading, setLoading ] = useState(false);
 
@@ -47,17 +47,16 @@ const Chart = ({ location, dateRange }) => {
 
         if (chart === null) {
             // console.log('---> CREATING CHART')
-            chart = am4core.create("chartdiv", am4charts.XYChart);
+            chart = am4core.create("dataChart", am4charts.XYChart);
             certain = createCertain(chart);
 
-            configChart(chart);
-            //configDateRange(chart, dateRange);
+            configDataChart(chart);
 
             chart.events.on("datavalidated", function () {
                 setLoading(false);
                 certain.hide();
+                onDataLoaded(chart.data);
             });
-
         }
 
         certain.show();
@@ -67,13 +66,13 @@ const Chart = ({ location, dateRange }) => {
             if (chart === null) {
                 return;
             }
-            resetChart(chart, dateRange);
+            resetChart(chart, dateRange, true);
             chart.data = weatherData(weather);
         }).catch((error) => {
             if (chart === null) {
                 return;
             }
-            resetChart(chart, dateRange);
+            resetChart(chart, dateRange, true);
             chart.data = [];
 
             alert(JSON.stringify(error));
@@ -123,9 +122,9 @@ const Chart = ({ location, dateRange }) => {
     return (
         <div className="__Chart__">
             <Loader loading={loading} />
-            <div id="chartdiv" className="chart"></div>
+            <div id="dataChart" className="chart"></div>
         </div>
     );
 };
 
-export default Chart;
+export default DataChart;
