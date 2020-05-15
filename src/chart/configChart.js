@@ -102,9 +102,9 @@ function configPictogramAxis(pictogramAxis) {
 }
 
 function configSpeedAxis(speedAxis) {
-    speedAxis.title.text = "Speed (km/h)";
+    speedAxis.title.text = "Speed (km/h), Dist (km)";
     speedAxis.title.fontWeight = 700;
-    speedAxis.title.fontFamily = FONT;
+    speedAxis.title.fontFamily = FONT
     speedAxis.min = -20;
     speedAxis.max = 120;
     speedAxis.strictMinMax = true;
@@ -224,10 +224,22 @@ function configWindSpeedSeries(series) {
     series.name = "Wind";
     series.dataFields.dateX = "date";
     series.dataFields.valueY = "windspeedKmph";
-    series.tooltipText = "wind ({winddirDegree}" + DEGREE + "): {windspeedKmph} km/h";
+    series.tooltipText = "Wind ({winddirDegree}" + DEGREE + "): {windspeedKmph} km/h";
     let bullet = series.bullets.push(new am4charts.Bullet());
     configWindBullet(bullet);
     series.strokeWidth = 1;
+}
+
+function configVisibilitySeries(series) {
+    series.name = "Visibility";
+    series.dataFields.dateX = "date";
+    series.dataFields.valueY = "visibility";
+    series.tooltipText = "Visibility: {visibility} km";
+    series.strokeWidth = 3;
+
+    series.minBulletDistance = 5;
+    let bullet = series.bullets.push(new am4charts.Bullet());
+    configCircleBullet(bullet);
 }
 
 export function createCertain(chart) {
@@ -260,7 +272,7 @@ const configChart = (chart) => {
         am4core.color("#0384fc"),
         am4core.color("#6f9ec9"),
         am4core.color("magenta"),
-        am4core.color("white")
+        am4core.color("#6a086e")
     ];
 
     chart.xAxes.push(new am4charts.DateAxis());
@@ -356,13 +368,19 @@ const configChart = (chart) => {
     series.yAxis = speedAxis;
     speedAxis.renderer.line.stroke = series.stroke;
     speedAxis.renderer.labels.template.fill = series.stroke;
-    speedAxis.title.fill = series.stroke;
 /*
     // Wind pictogram
     series = chart.series.push(new am4charts.LineSeries());
     configWindPictogramSeries(series);
     series.yAxis = pictogramAxis2;
 */
+
+    // Visibility
+    series = chart.series.push(new am4charts.LineSeries());
+    configVisibilitySeries(series);
+    series.yAxis = speedAxis;
+    speedAxis.title.fill = series.stroke;
+
     chart.legend = new am4charts.Legend();
     chart.legend.reverseOrder = true;
     var markerTemplate = chart.legend.markers.template;

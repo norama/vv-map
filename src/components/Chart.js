@@ -109,7 +109,8 @@ const Chart = ({ location, dateRange }) => {
                     windspeedKmph: hour.windspeedKmph,
                     mintempC: day.mintempC,
                     maxtempC: day.maxtempC,
-                    tempC: hour.tempC
+                    tempC: hour.tempC,
+                    visibility: hour.visibility
                 };
                 data.push(item);
                 millis += THREE_HOURS;
