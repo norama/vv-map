@@ -5,7 +5,7 @@ import * as am4charts from "@amcharts/amcharts4/charts";
 import theme from "@amcharts/amcharts4/themes/animated";
 
 import { configDataChart, createCertain } from '../chart/configChart';
-import { resetChart } from '../chart/manageChart';
+import { resetDataChart } from '../chart/manageChart';
 
 import fetchWeather from '../api/fetchWeather';
 
@@ -66,13 +66,13 @@ const DataChart = ({ location, dateRange, onDataLoaded }) => {
             if (chart === null) {
                 return;
             }
-            resetChart(chart, dateRange, true);
+            resetDataChart(chart, dateRange, true);
             chart.data = weatherData(weather);
         }).catch((error) => {
             if (chart === null) {
                 return;
             }
-            resetChart(chart, dateRange, true);
+            resetDataChart(chart, dateRange, true);
             chart.data = [];
 
             alert(JSON.stringify(error));
@@ -97,19 +97,19 @@ const DataChart = ({ location, dateRange, onDataLoaded }) => {
             day.hourly.forEach((hour) => {
                 let item = {
                     date: millis,
-                    DewPointC: hour.DewPointC,
-                    Humidity: hour.humidity,
-                    cloudcover: hour.cloudcover,
+                    DewPointC: parseFloat(hour.DewPointC),
+                    Humidity: parseFloat(hour.humidity),
+                    cloudcover: parseFloat(hour.cloudcover),
                     WeatherPictogram: 2,
                     WindPictogram: 1,
                     weatherDesc: hour.weatherDesc.length ? hour.weatherDesc[0].value : '',
                     weatherIconUrl: hour.weatherIconUrl.length ? hour.weatherIconUrl[0].value : null,
-                    winddirDegree: hour.winddirDegree,
-                    windspeedKmph: hour.windspeedKmph,
-                    mintempC: day.mintempC,
-                    maxtempC: day.maxtempC,
-                    tempC: hour.tempC,
-                    visibility: hour.visibility
+                    winddirDegree: parseFloat(hour.winddirDegree),
+                    windspeedKmph: parseFloat(hour.windspeedKmph),
+                    mintempC: parseFloat(day.mintempC),
+                    maxtempC: parseFloat(day.maxtempC),
+                    tempC: parseFloat(hour.tempC),
+                    visibility: parseFloat(hour.visibility)
                 };
                 data.push(item);
                 millis += THREE_HOURS;

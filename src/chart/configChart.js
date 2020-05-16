@@ -58,7 +58,7 @@ function configWindBullet(bullet, showSize=true) {
     hoverState.properties.scale = 2;
 }
 
-function configDateAxis(dateAxis, startDate, endDate) {
+function configDateAxis(dateAxis, startDate, endDate, dateFormat) {
     dateAxis.renderer.grid.template.disabled = true;
     //dateAxis.renderer.labels.template.disabled = true;
 
@@ -73,7 +73,7 @@ function configDateAxis(dateAxis, startDate, endDate) {
 
     dateAxis.renderer.labels.template.location = 0.5;
 
-    dateAxis.tooltipDateFormat = "MM-dd:HH";
+    dateAxis.tooltipDateFormat = dateFormat;
 
     dateAxis.groupData = true;
     dateAxis.groupCount = 300;
@@ -253,8 +253,8 @@ export function createCertain(chart) {
     return certain;
 }
 
-export function configDateRange(chart, dateRange) {
-    configDateAxis(chart.xAxes.getIndex(0), dateRange.startDate, dateRange.endDate);
+export function configDateRange(chart, dateRange, dateFormat) {
+    configDateAxis(chart.xAxes.getIndex(0), dateRange.startDate, dateRange.endDate, dateFormat);
 }
 
 export const configDataChart = (chart) => {
@@ -409,14 +409,26 @@ function configCalcAxis(calcAxis) {
     calcAxis.renderer.minGridDistance = 30;
 }
 
-function configCalcSeries(series) {
-    series.name = "Calc";
+function configCalc1Series(series) {
+    series.name = "Calc with visibility";
     series.dataFields.dateX = "date";
-    series.dataFields.valueY = "calc";
-    series.tooltipText = "Calc: {calc}";
+    series.dataFields.valueY = "calc1";
+    series.tooltipText = "Calc: {calc1}";
     series.strokeWidth = 3;
 
-    series.minBulletDistance = 5;
+    series.minBulletDistance = 15;
+    let bullet = series.bullets.push(new am4charts.Bullet());
+    configCircleBullet(bullet);
+}
+
+function configCalc2Series(series) {
+    series.name = "Calc without visibility";
+    series.dataFields.dateX = "date";
+    series.dataFields.valueY = "calc2";
+    series.tooltipText = "Calc: {calc2}";
+    series.strokeWidth = 3;
+
+    series.minBulletDistance = 15;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }
@@ -428,7 +440,8 @@ export const configCalcChart = (chart) => {
     chart.paddingRight = 30;
 
     chart.colors.list = [
-        am4core.color("orange")
+        am4core.color("#6a086e"),
+        am4core.color("#d13104")
     ];
 
     chart.xAxes.push(new am4charts.DateAxis());
@@ -438,14 +451,18 @@ export const configCalcChart = (chart) => {
     calcAxis.marginTop = 10;
     calcAxis.marginBottom = 10;
     let scrollbarX = new am4charts.XYChartScrollbar();
-    let scrollbarY = new am4charts.XYChartScrollbar();
 
-    // Calc
+    // Calc with visibility
     let series = chart.series.push(new am4charts.LineSeries());
-    configCalcSeries(series);
+    configCalc1Series(series);
     series.yAxis = calcAxis;
     scrollbarX.series.push(series);
-    scrollbarY.series.push(series);
+
+    // Calc without visibility
+    series = chart.series.push(new am4charts.LineSeries());
+    configCalc2Series(series);
+    series.yAxis = calcAxis;
+    scrollbarX.series.push(series);
 
     chart.legend = new am4charts.Legend();
     chart.legend.reverseOrder = true;
@@ -460,5 +477,4 @@ export const configCalcChart = (chart) => {
     chart.cursor = new am4charts.XYCursor();
 
     chart.scrollbarX = scrollbarX;
-    chart.scrollbarY = scrollbarY;
 };

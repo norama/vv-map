@@ -34,6 +34,14 @@ const Weather = ({ location, dateRange, name }) => {
         setParameters(true);
     }
 
+    const reference = activeTab === '1' ? {
+        url: process.env.REACT_APP_WEATHER_REFERENCE_URL,
+        text: 'Powered by World Weather Online'
+    } : {
+        url: process.env.REACT_APP_METEO_ARTICLE_URL,
+        text: 'Reference: Roles of meteorological conditions in COVID-19 transmission on a worldwide scale'
+    };
+
     return (
         <>
             { parameters ? 
@@ -78,7 +86,7 @@ const Weather = ({ location, dateRange, name }) => {
                         <CalcChart weatherData={data} dateRange={dateRange} />
                     </TabPane>
                 </TabContent>
-                <a href={process.env.REACT_APP_WEATHER_REFERENCE_URL} className="weather-reference" target="_blank" rel="noopener noreferrer">Powered by World Weather Online</a>
+            <a href={reference.url} className="weather-reference" target="_blank" rel="noopener noreferrer">{reference.text}</a>
             </div>
         </>
     );
