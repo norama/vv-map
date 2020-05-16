@@ -111,7 +111,7 @@ const CalcChart = ({ weatherData, dateRange }) => {
                 humidity: fieldAvg(weatherDay, 'Humidity') / 100
             };
             day.rh = calcRH(day.dewpoint, day.temp);
-            console.log(day);
+            // console.log(day);
             let item = {
                 date: weatherDay[0].date,
                 calc1: calc1(day),
