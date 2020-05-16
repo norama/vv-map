@@ -433,6 +433,18 @@ function configCalc2Series(series) {
     configCircleBullet(bullet);
 }
 
+function configMeasureSeries(series) {
+    series.name = "Measure: (temperature - dewpoint) * 10";
+    series.dataFields.dateX = "date";
+    series.dataFields.valueY = "measure";
+    series.tooltipText = "Measure: {measure}";
+    series.strokeWidth = 3;
+
+    series.minBulletDistance = 15;
+    let bullet = series.bullets.push(new am4charts.Bullet());
+    configCircleBullet(bullet);
+}
+
 export const configCalcChart = (chart) => {
 
     chart.preloader.disabled = true;
@@ -440,8 +452,10 @@ export const configCalcChart = (chart) => {
     chart.paddingRight = 30;
 
     chart.colors.list = [
-        am4core.color("#6a086e"),
-        am4core.color("#d13104")
+        am4core.color("#edac15"),
+        am4core.color("#e84900"),
+        am4core.color("#1dad91"),
+        am4core.color("#0384fc")
     ];
 
     chart.xAxes.push(new am4charts.DateAxis());
@@ -461,6 +475,18 @@ export const configCalcChart = (chart) => {
     // Calc without visibility
     series = chart.series.push(new am4charts.LineSeries());
     configCalc2Series(series);
+    series.yAxis = calcAxis;
+    scrollbarX.series.push(series);
+
+    // measure: temperature - dewpoint
+    series = chart.series.push(new am4charts.LineSeries());
+    configMeasureSeries(series);
+    series.yAxis = calcAxis;
+    scrollbarX.series.push(series);
+
+    // relative humidity
+    series = chart.series.push(new am4charts.LineSeries());
+    configHumiditySeries(series);
     series.yAxis = calcAxis;
     scrollbarX.series.push(series);
 

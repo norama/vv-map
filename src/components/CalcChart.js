@@ -115,7 +115,9 @@ const CalcChart = ({ weatherData, dateRange }) => {
             let item = {
                 date: weatherDay[0].date,
                 calc1: calc1(day),
-                calc2: calc2(day)
+                calc2: calc2(day),
+                measure: (day.temp - day.dewpoint) * 10,
+                Humidity: day.humidity * 100
             }
             data.push(item)
         }
