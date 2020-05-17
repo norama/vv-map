@@ -158,7 +158,7 @@ function configTemperatureSeries(series) {
     series.tooltipText = "Temperature: {valueY.value} " + DEGREE + "C";
     series.strokeWidth = 3;
 
-    series.minBulletDistance = 15;
+    series.minBulletDistance = 10;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }
@@ -170,7 +170,7 @@ function configDewPointSeries(series) {
     series.tooltipText = "DewPoint: {valueY.value} " + DEGREE + "C";
     series.strokeWidth = 3;
 
-    series.minBulletDistance = 15;
+    series.minBulletDistance = 10;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }
@@ -182,7 +182,7 @@ function configHumiditySeries(series) {
     series.tooltipText = "Humidity: {valueY.value} %";
     series.strokeWidth = 3;
 
-    series.minBulletDistance = 15;
+    series.minBulletDistance = 10;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }
@@ -194,7 +194,7 @@ function configCloudCoverSeries(series) {
     series.tooltipText = "Clouds: {valueY.value} %";
     series.strokeWidth = 3;
 
-    series.minBulletDistance = 15;
+    series.minBulletDistance = 10;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }
@@ -205,7 +205,7 @@ function configWeatherPictogramSeries(series) {
     series.dataFields.valueY = "WeatherPictogram";
     series.dataFields.desc = "weatherDesc";
     series.strokeWidth = 0;
-    series.minBulletDistance = 15;
+    series.minBulletDistance = 10;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configWeatherBullet(bullet);
 }
@@ -238,7 +238,7 @@ function configVisibilitySeries(series) {
     series.strokeWidth = 3;
     series.strokeOpacity = 0.8;
 
-    series.minBulletDistance = 15;
+    series.minBulletDistance = 10;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }
@@ -414,7 +414,7 @@ function configCalc1Series(series) {
     series.tooltipText = "calc vis: {calc1}";
     series.strokeWidth = 3;
 
-    series.minBulletDistance = 15;
+    series.minBulletDistance = 10;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }
@@ -426,7 +426,7 @@ function configCalc2Series(series) {
     series.tooltipText = "calc: {calc2}";
     series.strokeWidth = 3;
 
-    series.minBulletDistance = 15;
+    series.minBulletDistance = 10;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }
@@ -438,7 +438,7 @@ function configMeasureSeries(series) {
     series.tooltipText = "dewpoint - temp: {measure}";
     series.strokeWidth = 3;
 
-    series.minBulletDistance = 15;
+    series.minBulletDistance = 10;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }

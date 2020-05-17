@@ -101,6 +101,32 @@ const CalcChart = ({ weatherData, dateRange }) => {
 
         let data = [];
 
+        weatherData.forEach((hour) => {
+            const hourData = {
+                temp: hour.tempC,
+                wind: hour.windspeedKmph / MILE,
+                vis: hour.visibility / MILE,
+                dewpoint: hour.DewPointC,
+                humidity: hour.Humidity / 100
+            };
+            hourData.rh = hourData.humidity; //calcRH(hourData.dewpoint, hourData.temp);
+            let item = {
+                date: hour.date,
+                calc1: calc1(hourData),
+                calc2: calc2(hourData),
+                measure: hourData.dewpoint - hourData.temp,
+                Humidity: hourData.humidity * 100
+            }
+            data.push(item)
+        });
+
+        return data;
+    };
+
+    const calcDataPerDay = () => {
+
+        let data = [];
+
         for (let i=0; i < weatherData.length; i += 8) {
             const weatherDay = weatherData.slice(i, i + 8);
             const day = {

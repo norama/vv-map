@@ -1,7 +1,9 @@
 import { configDateRange } from './configChart';
 
+const DATE_FORMAT = "MM-dd:HH";
+
 export const resetDataChart = (chart, dateRange) => {
-    configDateRange(chart, dateRange, "MM-dd:HH");
+    configDateRange(chart, dateRange, DATE_FORMAT);
 
     // workaround to display axis ranges properly
     const percentAxis = chart.yAxes.getIndex(0);
@@ -15,7 +17,7 @@ export const resetDataChart = (chart, dateRange) => {
 };
 
 export const resetCalcChart = (chart, dateRange) => {
-    configDateRange(chart, dateRange, "MM-dd");
+    configDateRange(chart, dateRange, DATE_FORMAT);
 
     for (const series of chart.series) {
         series.bulletsContainer.disposeChildren()
