@@ -158,7 +158,7 @@ function configTemperatureSeries(series) {
     series.tooltipText = "Temperature: {valueY.value} " + DEGREE + "C";
     series.strokeWidth = 3;
 
-    series.minBulletDistance = 5;
+    series.minBulletDistance = 15;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }
@@ -170,7 +170,7 @@ function configDewPointSeries(series) {
     series.tooltipText = "DewPoint: {valueY.value} " + DEGREE + "C";
     series.strokeWidth = 3;
 
-    series.minBulletDistance = 5;
+    series.minBulletDistance = 15;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }
@@ -182,7 +182,7 @@ function configHumiditySeries(series) {
     series.tooltipText = "Humidity: {valueY.value} %";
     series.strokeWidth = 3;
 
-    series.minBulletDistance = 5;
+    series.minBulletDistance = 15;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }
@@ -194,7 +194,7 @@ function configCloudCoverSeries(series) {
     series.tooltipText = "Clouds: {valueY.value} %";
     series.strokeWidth = 3;
 
-    series.minBulletDistance = 5;
+    series.minBulletDistance = 15;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }
@@ -237,11 +237,10 @@ function configVisibilitySeries(series) {
     series.tooltipText = "Visibility: {visibility} km";
     series.strokeWidth = 3;
     series.strokeOpacity = 0.8;
-/*
-    series.minBulletDistance = 5;
+
+    series.minBulletDistance = 15;
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
-*/
 }
 
 export function createCertain(chart) {
@@ -291,12 +290,12 @@ export const configDataChart = (chart) => {
 
     let temperatureAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configTemperatureAxis(temperatureAxis);
-    temperatureAxis.marginTop = 40;
+    temperatureAxis.marginTop = 30;
     temperatureAxis.marginBottom = 10;
 
     let temperatureAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
     configTemperatureAxis(temperatureAxis2);
-    temperatureAxis2.marginTop = 40;
+    temperatureAxis2.marginTop = 30;
     temperatureAxis2.marginBottom = 10;
     temperatureAxis2.renderer.opposite = true;
 
@@ -400,20 +399,19 @@ export const configDataChart = (chart) => {
 };
 
 function configCalcAxis(calcAxis) {
-    calcAxis.title.text = "Calc";
     calcAxis.title.fontWeight = 700;
     calcAxis.title.fontFamily = FONT;
     //calcAxis.min = -10;
     //calcAxis.max = 110;
-    //calcAxis.strictMinMax = true;
+    calcAxis.strictMinMax = false;
     calcAxis.renderer.minGridDistance = 30;
 }
 
 function configCalc1Series(series) {
-    series.name = "Calc with visibility";
+    series.name = "with visibility";
     series.dataFields.dateX = "date";
     series.dataFields.valueY = "calc1";
-    series.tooltipText = "Calc: {calc1}";
+    series.tooltipText = "calc vis: {calc1}";
     series.strokeWidth = 3;
 
     series.minBulletDistance = 15;
@@ -422,10 +420,10 @@ function configCalc1Series(series) {
 }
 
 function configCalc2Series(series) {
-    series.name = "Calc without visibility";
+    series.name = "without visibility";
     series.dataFields.dateX = "date";
     series.dataFields.valueY = "calc2";
-    series.tooltipText = "Calc: {calc2}";
+    series.tooltipText = "calc: {calc2}";
     series.strokeWidth = 3;
 
     series.minBulletDistance = 15;
@@ -434,10 +432,10 @@ function configCalc2Series(series) {
 }
 
 function configMeasureSeries(series) {
-    series.name = "Measure: (temperature - dewpoint) * 10";
+    series.name = "dewpoint - temp";
     series.dataFields.dateX = "date";
     series.dataFields.valueY = "measure";
-    series.tooltipText = "Measure: {measure}";
+    series.tooltipText = "dewpoint - temp: {measure}";
     series.strokeWidth = 3;
 
     series.minBulletDistance = 15;
@@ -446,6 +444,9 @@ function configMeasureSeries(series) {
 }
 
 export const configCalcChart = (chart) => {
+
+    chart.leftAxesContainer.layout = "vertical";
+    chart.rightAxesContainer.layout = "vertical";
 
     chart.preloader.disabled = true;
 
@@ -460,42 +461,75 @@ export const configCalcChart = (chart) => {
 
     chart.xAxes.push(new am4charts.DateAxis());
 
-    let calcAxis = chart.yAxes.push(new am4charts.ValueAxis());
-    configCalcAxis(calcAxis);
-    calcAxis.marginTop = 10;
-    calcAxis.marginBottom = 10;
     let scrollbarX = new am4charts.XYChartScrollbar();
+
+    let percentAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    configPercentAxis(percentAxis);
+    percentAxis.marginTop = 30;
+    percentAxis.marginBottom = 10;
+
+    let calc1Axis = chart.yAxes.push(new am4charts.ValueAxis());
+    configCalcAxis(calc1Axis);
+    calc1Axis.title.text = "Calc (ref below)";
+    calc1Axis.marginTop = 30;
+    calc1Axis.marginBottom = 10;
+
+    let calc2Axis = chart.yAxes.push(new am4charts.ValueAxis());
+    configCalcAxis(calc2Axis);
+    calc2Axis.title.text = "Calc (ref below)";
+    calc2Axis.marginTop = 40;
+    calc2Axis.marginBottom = 10;
+    calc2Axis.renderer.opposite = true;
+
+    let temperatureAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    configTemperatureAxis(temperatureAxis);
+    temperatureAxis.title.text = "Dewp - temp (" + DEGREE + "C)";
+    temperatureAxis.strictMinMax = false;
+    temperatureAxis.marginTop = 10;
+    temperatureAxis.marginBottom = 10;
+    temperatureAxis.renderer.opposite = true;
+
 
     // Calc with visibility
     let series = chart.series.push(new am4charts.LineSeries());
     configCalc1Series(series);
-    series.yAxis = calcAxis;
+    series.yAxis = calc1Axis;
     scrollbarX.series.push(series);
+    calc1Axis.renderer.line.stroke = series.stroke;
+    calc1Axis.renderer.labels.template.fill = series.stroke;
+    calc1Axis.title.fill = series.stroke;
 
     // Calc without visibility
     series = chart.series.push(new am4charts.LineSeries());
     configCalc2Series(series);
-    series.yAxis = calcAxis;
+    series.yAxis = calc1Axis;
     scrollbarX.series.push(series);
+    calc1Axis.title.fill = series.stroke;
 
     // measure: temperature - dewpoint
     series = chart.series.push(new am4charts.LineSeries());
     configMeasureSeries(series);
-    series.yAxis = calcAxis;
+    series.yAxis = temperatureAxis;
     scrollbarX.series.push(series);
+    temperatureAxis.renderer.line.stroke = series.stroke;
+    temperatureAxis.renderer.labels.template.fill = series.stroke;
+    temperatureAxis.title.fill = series.stroke;
 
     // relative humidity
     series = chart.series.push(new am4charts.LineSeries());
     configHumiditySeries(series);
-    series.yAxis = calcAxis;
+    series.yAxis = percentAxis;
     scrollbarX.series.push(series);
+    percentAxis.renderer.line.stroke = series.stroke;
+    percentAxis.renderer.labels.template.fill = series.stroke;
+    percentAxis.title.fill = series.stroke;
 
     chart.legend = new am4charts.Legend();
     chart.legend.reverseOrder = true;
     var markerTemplate = chart.legend.markers.template;
     markerTemplate.width = 40;
     markerTemplate.height = 40;
-    //chart.legend.position = "right";
+    chart.legend.position = "right";
     chart.legend.labels.template.fontSize = 12;
     chart.legend.labels.template.fontWeight = 500;
     chart.legend.labels.template.fontFamily = FONT;
