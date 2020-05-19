@@ -394,6 +394,7 @@ export const configDataChart = (chart) => {
 
     chart.cursor = new am4charts.XYCursor();
 
+    scrollbarX.minHeight = 30;
     chart.scrollbarX = scrollbarX;
     //chart.scrollbarY = scrollbarY;
 };
@@ -536,5 +537,6 @@ export const configCalcChart = (chart) => {
 
     chart.cursor = new am4charts.XYCursor();
 
+    scrollbarX.minHeight = 30;
     chart.scrollbarX = scrollbarX;
 };
