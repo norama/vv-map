@@ -444,6 +444,136 @@ function configMeasureSeries(series) {
     configCircleBullet(bullet);
 }
 
+export const configCalcCharts = (topChart, bottomChart) => {
+
+    //chart.leftAxesContainer.layout = "vertical";
+    //chart.rightAxesContainer.layout = "vertical";
+
+    const charts = [ topChart, bottomChart ];
+
+    charts.forEach((chart) => {
+        chart.preloader.disabled = true;
+
+        chart.paddingRight = 30;
+
+        chart.colors.list = [
+            am4core.color("#edac15"),
+            am4core.color("#e84900"),
+            am4core.color("#1dad91"),
+            am4core.color("#0384fc")
+        ];
+
+        let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+        if (chart === topChart) {
+            dateAxis.renderer.opposite = true;
+        }
+
+        let scrollbarX = new am4charts.XYChartScrollbar();
+
+        let percentAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        configPercentAxis(percentAxis);
+        percentAxis.marginTop = 10;
+        percentAxis.marginBottom = 10;
+    
+        let calcAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        configCalcAxis(calcAxis);
+        calcAxis.title.text = "Calc (ref below)";
+        calcAxis.marginTop = 10;
+        calcAxis.marginBottom = 10;
+    
+        let temperatureAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        configTemperatureAxis(temperatureAxis);
+        temperatureAxis.title.text = "Dewp - temp (" + DEGREE + "C)";
+        temperatureAxis.strictMinMax = false;
+        temperatureAxis.marginTop = 10;
+        temperatureAxis.marginBottom = 10;
+        temperatureAxis.renderer.opposite = true;
+
+        // Calc with visibility
+        let series = chart.series.push(new am4charts.LineSeries());
+        configCalc1Series(series);
+        series.yAxis = calcAxis;
+        scrollbarX.series.push(series);
+        calcAxis.renderer.line.stroke = series.stroke;
+        calcAxis.renderer.labels.template.fill = series.stroke;
+
+        // Calc without visibility
+        series = chart.series.push(new am4charts.LineSeries());
+        configCalc2Series(series);
+        series.yAxis = calcAxis;
+        scrollbarX.series.push(series);
+        calcAxis.title.fill = series.stroke;
+
+        // measure: temperature - dewpoint
+        series = chart.series.push(new am4charts.LineSeries());
+        configMeasureSeries(series);
+        series.yAxis = temperatureAxis;
+        scrollbarX.series.push(series);
+        temperatureAxis.renderer.line.stroke = series.stroke;
+        temperatureAxis.renderer.labels.template.fill = series.stroke;
+        temperatureAxis.title.fill = series.stroke;
+
+        // relative humidity
+        series = chart.series.push(new am4charts.LineSeries());
+        configHumiditySeries(series);
+        series.yAxis = percentAxis;
+        scrollbarX.series.push(series);
+        percentAxis.renderer.line.stroke = series.stroke;
+        percentAxis.renderer.labels.template.fill = series.stroke;
+        percentAxis.title.fill = series.stroke;
+
+        chart.legend = new am4charts.Legend();
+        chart.legend.reverseOrder = true;
+        var markerTemplate = chart.legend.markers.template;
+        markerTemplate.width = 40;
+        markerTemplate.height = 40;
+        chart.legend.position = chart === topChart ? "top" : "bottom";
+        chart.legend.labels.template.fontSize = 12;
+        chart.legend.labels.template.fontWeight = 500;
+        chart.legend.labels.template.fontFamily = FONT;
+
+        chart.cursor = new am4charts.XYCursor();
+
+        scrollbarX.minHeight = 30;
+        chart.scrollbarX = scrollbarX;
+        chart.scrollbarX.parent = (chart === topChart) ? chart.topAxesContainer : chart.bottomAxesContainer;
+    });
+/*
+    bottomChart.zoomOutButton.valign = "bottom";
+    bottomChart.zoomOutButton.parent = bottomChart.chartAndLegendContainer;
+    bottomChart.zoomOutButton.marginRight = 30;
+    bottomChart.zoomOutButton.marginTop = -30;
+*/
+    topChart.zoomOutButton.icon.disabled = true;
+    topChart.zoomOutButton.icon.width = 0;
+    topChart.zoomOutButton.icon.height = 0;
+    bottomChart.zoomOutButton.events.on("hit", zoomOut);
+
+    function zoomOut(event) {
+        console.log(event);
+        let dateAxis = topChart.xAxes.getIndex(0);
+        dateAxis.zoomToDates(dateAxis.min, dateAxis.max);
+    }
+    /*
+    topChart.zoomOutButton.valign = "top";
+    topChart.zoomOutButton.zIndex = 1000;
+    topChart.zoomOutButton.parent = topChart.chartAndLegendContainer;
+    topChart.zoomOutButton.marginRight = -10;
+    topChart.zoomOutButton.marginTop = 80;
+    */
+
+    let dateAxis = bottomChart.xAxes.getIndex(0);
+    dateAxis.events.on("startchanged", syncZoom);
+    dateAxis.events.on("endchanged", syncZoom);
+
+    function syncZoom(event) {
+        console.log(event);
+        let dateAxis = topChart.xAxes.getIndex(0);
+        dateAxis.zoomToDates(event.target.minZoomed, event.target.maxZoomed);
+    }
+
+};
+
 export const configCalcChart = (chart) => {
 
     chart.leftAxesContainer.layout = "vertical";
