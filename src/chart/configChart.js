@@ -468,32 +468,40 @@ export const configCalcCharts = (topChart, bottomChart) => {
             dateAxis.renderer.opposite = true;
         }
 
-        let scrollbarX = new am4charts.XYChartScrollbar();
-
         let percentAxis = chart.yAxes.push(new am4charts.ValueAxis());
         configPercentAxis(percentAxis);
-        percentAxis.marginTop = 10;
-        percentAxis.marginBottom = 10;
+        percentAxis.strictMinMax = true;
+        percentAxis.marginTop = 0;
+        percentAxis.marginBottom = 0;
     
         let calcAxis = chart.yAxes.push(new am4charts.ValueAxis());
         configCalcAxis(calcAxis);
         calcAxis.title.text = "Calc (ref below)";
-        calcAxis.marginTop = 10;
-        calcAxis.marginBottom = 10;
-    
+        calcAxis.marginTop = 0;
+        calcAxis.strictMinMax = true;
+        calcAxis.marginBottom = 0;
+        calcAxis.renderer.opposite = true;
+
         let temperatureAxis = chart.yAxes.push(new am4charts.ValueAxis());
         configTemperatureAxis(temperatureAxis);
         temperatureAxis.title.text = "Dewp - temp (" + DEGREE + "C)";
-        temperatureAxis.strictMinMax = false;
-        temperatureAxis.marginTop = 10;
-        temperatureAxis.marginBottom = 10;
-        temperatureAxis.renderer.opposite = true;
+        temperatureAxis.strictMinMax = true;
+        temperatureAxis.marginTop = 0;
+        temperatureAxis.marginBottom = 0;
+
+        let virAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        configCalcAxis(virAxis);
+        virAxis.title.text = "Virus spread";
+        virAxis.strictMinMax = true;
+        virAxis.marginTop = 0;
+        virAxis.marginBottom = 0;
+        virAxis.renderer.opposite = true;
 
         // Calc with visibility
         let series = chart.series.push(new am4charts.LineSeries());
         configCalc1Series(series);
         series.yAxis = calcAxis;
-        scrollbarX.series.push(series);
+        series.hidden = (chart === bottomChart);
         calcAxis.renderer.line.stroke = series.stroke;
         calcAxis.renderer.labels.template.fill = series.stroke;
 
@@ -501,14 +509,14 @@ export const configCalcCharts = (topChart, bottomChart) => {
         series = chart.series.push(new am4charts.LineSeries());
         configCalc2Series(series);
         series.yAxis = calcAxis;
-        scrollbarX.series.push(series);
+        series.hidden = (chart === bottomChart);
         calcAxis.title.fill = series.stroke;
 
         // measure: temperature - dewpoint
         series = chart.series.push(new am4charts.LineSeries());
         configMeasureSeries(series);
         series.yAxis = temperatureAxis;
-        scrollbarX.series.push(series);
+        series.hidden = (chart === topChart);
         temperatureAxis.renderer.line.stroke = series.stroke;
         temperatureAxis.renderer.labels.template.fill = series.stroke;
         temperatureAxis.title.fill = series.stroke;
@@ -517,13 +525,19 @@ export const configCalcCharts = (topChart, bottomChart) => {
         series = chart.series.push(new am4charts.LineSeries());
         configHumiditySeries(series);
         series.yAxis = percentAxis;
-        scrollbarX.series.push(series);
+        series.hidden = (chart === topChart);
         percentAxis.renderer.line.stroke = series.stroke;
         percentAxis.renderer.labels.template.fill = series.stroke;
         percentAxis.title.fill = series.stroke;
 
+        const legenddiv = chart === topChart ? "topLegend" : "bottomLegend";
+        let legendContainer = am4core.create(legenddiv, am4core.Container);
+        legendContainer.width = am4core.percent(100);
+        legendContainer.height = 30;
+
         chart.legend = new am4charts.Legend();
-        chart.legend.reverseOrder = true;
+        chart.legend.parent = legendContainer;
+        //chart.legend.reverseOrder = true;
         var markerTemplate = chart.legend.markers.template;
         markerTemplate.width = 40;
         markerTemplate.height = 40;
@@ -534,8 +548,13 @@ export const configCalcCharts = (topChart, bottomChart) => {
 
         chart.cursor = new am4charts.XYCursor();
 
-        scrollbarX.minHeight = 30;
+        let scrollbarX = new am4charts.XYChartScrollbar();
+        scrollbarX.minHeight = 20;
         chart.scrollbarX = scrollbarX;
+        chart.scrollbarX.background.fill = am4core.color("#dc67ab");
+        chart.scrollbarX.background.fillOpacity = 0.2;
+        chart.scrollbarX.thumb.background.fill = am4core.color("#67dcab");
+        chart.scrollbarX.thumb.background.fillOpacity = 0.2;
         chart.scrollbarX.parent = (chart === topChart) ? chart.topAxesContainer : chart.bottomAxesContainer;
     });
 /*
@@ -550,7 +569,6 @@ export const configCalcCharts = (topChart, bottomChart) => {
     bottomChart.zoomOutButton.events.on("hit", zoomOut);
 
     function zoomOut(event) {
-        console.log(event);
         let dateAxis = topChart.xAxes.getIndex(0);
         dateAxis.zoomToDates(dateAxis.min, dateAxis.max);
     }
@@ -563,11 +581,9 @@ export const configCalcCharts = (topChart, bottomChart) => {
     */
 
     let dateAxis = bottomChart.xAxes.getIndex(0);
-    dateAxis.events.on("startchanged", syncZoom);
-    dateAxis.events.on("endchanged", syncZoom);
+    dateAxis.events.on("selectionextremeschanged", syncZoom);
 
     function syncZoom(event) {
-        console.log(event);
         let dateAxis = topChart.xAxes.getIndex(0);
         dateAxis.zoomToDates(event.target.minZoomed, event.target.maxZoomed);
     }

@@ -150,6 +150,7 @@ const CalcChart = ({ weatherData, dateRange }) => {
         setLoading(true);
 
         resetCalcChart(charts.virus.chart, dateRange);
+        resetCalcChart(charts.estimate.chart, dateRange);
         charts.virus.chart.data = calcData();
         charts.estimate.chart.data = [...charts.virus.chart.data];
         charts.virus.chart.invalidateData();
@@ -215,10 +216,12 @@ const CalcChart = ({ weatherData, dateRange }) => {
         <div className="__Chart__">
             <Loader loading={loading} />
             <div className="calc-top-chart">
+                <div id="topLegend" className="top-legend"></div>
                 <div id="virusChart" className="top-chart"></div>
             </div>
             <div className="calc-bottom-chart">
                 <div id="estimateChart" className="bottom-chart"></div>
+                <div id="bottomLegend" className="bottom-legend"></div>
             </div>
         </div>
     );
