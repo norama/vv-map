@@ -588,6 +588,16 @@ export const configCalcCharts = (topChart, bottomChart) => {
         dateAxis.zoomToDates(event.target.minZoomed, event.target.maxZoomed);
     }
 
+    for (const series of topChart.series) {
+        series.parent = bottomChart.seriesContainer;
+        series.tooltip.pointerOrientation = "left";
+    }
+    for (const series of bottomChart.series) {
+        series.tooltip.pointerOrientation = "right";
+    }
+    bottomChart.cursor.events.on("cursorpositionchanged", function(ev) {
+        topChart.cursor.triggerMove(ev.target.point, "none", true);
+    });
 };
 
 export const configCalcChart = (chart) => {
