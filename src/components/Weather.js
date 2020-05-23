@@ -83,7 +83,7 @@ const Weather = ({ location, dateRange, name }) => {
                         <DataChart location={location} dateRange={dateRange} onDataLoaded={setData} />
                     </TabPane>
                     <TabPane tabId="2">
-                        <CalcChart weatherData={data} dateRange={dateRange} />
+                        <CalcChart weatherData={data} location={location} dateRange={dateRange} />
                     </TabPane>
                 </TabContent>
             <a href={reference.url} className="weather-reference" target="_blank" rel="noopener noreferrer">{reference.text}</a>

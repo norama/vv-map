@@ -4,8 +4,10 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import theme from "@amcharts/amcharts4/themes/animated";
 
-import { configCalcChart, configCalcCharts, createCertain } from '../chart/configChart';
+import { createCertain, configCalcCharts } from '../chart/configChart';
 import { resetCalcChart } from '../chart/manageChart';
+
+import fetchVirusSpread from '../api/fetchVirusSpread';
 
 import Loader from './Loader';
 
@@ -30,8 +32,17 @@ const START_CHARTS = {
 
 let charts = START_CHARTS;
 
-let chart = null;
-let certain = null;
+function initCharts() {
+    console.log('---> CREATING CHART');
+    charts = {...START_CHARTS};
+    charts.virus.chart = am4core.create("virusChart", am4charts.XYChart);
+    charts.virus.certain = createCertain(charts.virus.chart);
+    charts.estimate.chart = am4core.create("estimateChart", am4charts.XYChart);
+    charts.estimate.certain = createCertain(charts.estimate.chart);
+
+    configCalcCharts(charts.virus.chart, charts.estimate.chart);
+
+}
 
 function disposeChart(chart) {
     if (chart) {
@@ -82,10 +93,20 @@ const avg = (arr) => (arr.reduce((a, b) => (a + b), 0) / arr.length);
 
 const fieldAvg = (arr, field) => (arr.reduce((a, b) => (a + b[field]), 0) / arr.length);
 
-const CalcChart = ({ weatherData, dateRange }) => {
+const CalcChart = ({ weatherData, location, dateRange }) => {
     const [ loading, setLoading ] = useState(false);
 
-/*
+    useEffect(() => {
+
+        initCharts();
+
+        charts.virus.chart.events.on("datavalidated", function () {
+            setLoading(false);
+            charts.virus.certain.hide();
+            charts.estimate.certain.hide();
+        });
+    }, []);
+
     useEffect(() => {
         if (!weatherData) {
             return;
@@ -93,72 +114,44 @@ const CalcChart = ({ weatherData, dateRange }) => {
 
         // console.log('location: [' + location.lat + ', ' + location.lng + '], dateRange: ' + dateRange.startDate + ' - ' + dateRange.endDate);
 
-        if (charts === START_CHARTS) {
-            // console.log('---> CREATING CHART')
-            charts.virus.chart = am4core.create("virusChart", am4charts.XYChart);
-            //charts.virus.certain = createCertain(charts.virus.chart);
-            //charts.estimate.chart = am4core.create("estimateChart", am4charts.XYChart);
-            //charts.estimate.certain = createCertain(charts.estimate.chart);
-
-            configCalcChart(charts.virus.chart);
-
-            charts.virus.chart.events.on("datavalidated", function () {
-                setLoading(false);
-                //charts.virus.certain.hide();
-                //charts.estimate.certain.hide();
-            });
-        }
-
-        //charts.virus.certain.show();
-        //charts.estimate.certain.show();
-        setLoading(true);
-
-        resetCalcChart(charts.virus.chart, dateRange);
-        //resetCalcChart(charts.estimate.chart, dateRange);
-        charts.virus.chart.data = calcData();
-        //charts.estimate.chart.data = [];
-        charts.virus.chart.invalidateData();
-        //charts.estimate.chart.invalidateData();
-
-    }, [ weatherData ]);
-*/
-    useEffect(() => {
-        if (!weatherData) {
-            return;
-        }
-
-        // console.log('location: [' + location.lat + ', ' + location.lng + '], dateRange: ' + dateRange.startDate + ' - ' + dateRange.endDate);
-
-        if (charts.virus.chart === null) {
-            // console.log('---> CREATING CHART')
-            charts.virus.chart = am4core.create("virusChart", am4charts.XYChart);
-            charts.virus.certain = createCertain(charts.virus.chart);
-            charts.estimate.chart = am4core.create("estimateChart", am4charts.XYChart);
-            charts.estimate.certain = createCertain(charts.estimate.chart);
-
-            configCalcCharts(charts.virus.chart, charts.estimate.chart);
-
-            charts.virus.chart.events.on("datavalidated", function () {
-                setLoading(false);
-                charts.virus.certain.hide();
-                charts.estimate.certain.hide();
-            });
-        }
-
-        charts.virus.certain.show();
-        charts.estimate.certain.show();
-        setLoading(true);
-
-        resetCalcChart(charts.virus.chart, dateRange);
         resetCalcChart(charts.estimate.chart, dateRange);
-        charts.virus.chart.data = calcData();
-        charts.estimate.chart.data = [...charts.virus.chart.data];
-        charts.virus.chart.invalidateData();
+        resetCalcChart(charts.virus.chart, dateRange);
+        charts.estimate.chart.data = calcEstimates();
+        charts.virus.chart.data = [...charts.estimate.chart.data];
         charts.estimate.chart.invalidateData();
 
     }, [ weatherData ]);
 
-    const calcData = () => {
+    useEffect(() => {
+
+        fetchVirusSpread(location, dateRange).then((virusSpread) => {
+            if (charts.virus.chart === null) {
+                return;
+            }
+
+            //resetCalcChart(charts.virus.chart, dateRange);
+
+            //charts.virus.chart.data = virusData(virusSpread);
+        }).catch((error) => {
+            if (charts.virus.chart === null) {
+                return;
+            }
+
+            resetCalcChart(charts.virus.chart, dateRange);
+
+            //charts.virus.chart.data = [];
+
+            alert(JSON.stringify(error));
+        }).finally(() => {
+            charts.virus.chart.invalidateData();
+        });
+    }, [ location.lat, location.lng, dateRange.startDate, dateRange.endDate ])
+
+    const virusData = (virusSpread) => {
+        return [];
+    }
+
+    const calcEstimates = () => {
 
         let data = [];
 

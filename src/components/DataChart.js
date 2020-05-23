@@ -77,9 +77,7 @@ const DataChart = ({ location, dateRange, onDataLoaded }) => {
 
             alert(JSON.stringify(error));
         }).finally(() => {
-            //setLoading(false);
             chart.invalidateData();
-            //certain.hide();
         });
 
     }, [ location.lat, location.lng, dateRange.startDate, dateRange.endDate ]);

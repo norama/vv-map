@@ -70,6 +70,7 @@ function configDateAxis(dateAxis, startDate, endDate, dateFormat) {
 
     dateAxis.min = beforeStartDate.getTime();
     dateAxis.max = afterEndDate.getTime();
+    dateAxis.strictMinMax = true;
 
     dateAxis.renderer.labels.template.location = 0.5;
 
@@ -444,7 +445,377 @@ function configMeasureSeries(series) {
     configCircleBullet(bullet);
 }
 
-export const configCalcCharts = (topChart, bottomChart) => {
+function configVirusAllSeries(series) {
+    series.name = "Virus All";
+    series.dataFields.dateX = "date";
+    series.dataFields.valueY = "confirmed";
+    series.tooltipText = "all confirmed: {confirmed}";
+    series.strokeWidth = 3;
+
+    series.minBulletDistance = 10;
+    let bullet = series.bullets.push(new am4charts.Bullet());
+    configCircleBullet(bullet);
+}
+
+function configVirusNewSeries(series) {
+    series.name = "Virus New";
+    series.dataFields.dateX = "date";
+    series.dataFields.valueY = "new_confirmed";
+    series.tooltipText = "new confirmed: {new_confirmed}";
+    series.strokeWidth = 3;
+
+    series.minBulletDistance = 10;
+    let bullet = series.bullets.push(new am4charts.Bullet());
+    configCircleBullet(bullet);
+}
+
+const addVirusAxes = (chart) => {
+
+    let virAllAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    configCalcAxis(virAllAxis);
+    virAllAxis.title.text = "Virus All";
+    virAllAxis.strictMinMax = true;
+    virAllAxis.marginTop = 0;
+    virAllAxis.marginBottom = 0;
+    //virAllAxis.renderer.opposite = true;
+    virAllAxis.renderer.line.stroke = am4core.color("#848f94");
+    virAllAxis.renderer.labels.template.fill = am4core.color("#848f94");
+    virAllAxis.title.fill = am4core.color("#848f94");
+
+    let virNewAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    configCalcAxis(virNewAxis);
+    virNewAxis.title.text = "Virus New";
+    //virNewAxis.strictMinMax = true;
+    virNewAxis.marginTop = 0;
+    virNewAxis.marginBottom = 0;
+    //virNewAxis.renderer.opposite = true;
+    virNewAxis.renderer.line.stroke = am4core.color("#2e3033");
+    virNewAxis.renderer.labels.template.fill = am4core.color("#2e3033");
+    virNewAxis.title.fill = am4core.color("#2e3033");
+
+    return { virAllAxis, virNewAxis };
+};
+
+const addEstimateAxes = (chart) => {
+
+    let percentAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    configPercentAxis(percentAxis);
+    percentAxis.strictMinMax = true;
+    percentAxis.marginTop = 0;
+    percentAxis.marginBottom = 0;
+    percentAxis.renderer.line.stroke = am4core.color("#0384fc");
+    percentAxis.renderer.labels.template.fill = am4core.color("#0384fc");
+    percentAxis.title.fill = am4core.color("#0384fc");
+    percentAxis.renderer.opposite = true;
+
+    let temperatureAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    configTemperatureAxis(temperatureAxis);
+    temperatureAxis.title.text = "Dewp - temp (" + DEGREE + "C)";
+    temperatureAxis.strictMinMax = true;
+    temperatureAxis.marginTop = 0;
+    temperatureAxis.marginBottom = 0;
+    temperatureAxis.renderer.line.stroke = am4core.color("#1dad91");
+    temperatureAxis.renderer.labels.template.fill = am4core.color("#1dad91");
+    temperatureAxis.title.fill = am4core.color("#1dad91");
+    temperatureAxis.renderer.opposite = true;
+
+    let calcAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    configCalcAxis(calcAxis);
+    calcAxis.title.text = "Calc (ref below)";
+    calcAxis.marginTop = 0;
+    calcAxis.strictMinMax = true;
+    calcAxis.marginBottom = 0;
+    calcAxis.renderer.line.stroke = am4core.color("#edac15");
+    calcAxis.renderer.labels.template.fill = am4core.color("#edac15");
+    calcAxis.title.fill = am4core.color("#e84900");
+    calcAxis.renderer.opposite = true;
+
+    return { percentAxis, temperatureAxis, calcAxis };
+};
+
+// top calc chart
+export const configVirusChart = (chart) => {
+    chart.preloader.disabled = true;
+
+    chart.paddingRight = 30;
+
+    chart.colors.list = [
+        am4core.color("#edac15"),
+        am4core.color("#e84900"),
+        am4core.color("#1dad91"),
+        am4core.color("#0384fc"),
+        am4core.color("#848f94"),
+        am4core.color("#2e3033")
+    ];
+
+    let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+    dateAxis.renderer.opposite = true;
+
+    const { percentAxis, temperatureAxis, calcAxis } = addEstimateAxes(chart);
+    const { virAllAxis, virNewAxis } = addVirusAxes(chart);
+
+    // Calc with visibility
+    let series = chart.series.push(new am4charts.LineSeries());
+    configCalc1Series(series);
+    series.yAxis = calcAxis;
+    series.hidden = true;
+
+    // Calc without visibility
+    series = chart.series.push(new am4charts.LineSeries());
+    configCalc2Series(series);
+    series.yAxis = calcAxis;
+    series.hidden = true;
+
+
+    // measure: temperature - dewpoint
+    series = chart.series.push(new am4charts.LineSeries());
+    configMeasureSeries(series);
+    series.yAxis = temperatureAxis;
+
+    // relative humidity
+    series = chart.series.push(new am4charts.LineSeries());
+    configHumiditySeries(series);
+    series.yAxis = percentAxis;
+
+    // Virus all
+    series = chart.series.push(new am4charts.LineSeries());
+    configVirusAllSeries(series);
+    series.yAxis = virAllAxis;
+
+    // Virus new
+    series = chart.series.push(new am4charts.LineSeries());
+    configVirusNewSeries(series);
+    series.yAxis = virNewAxis;
+ 
+    let legendContainer = am4core.create("topLegend", am4core.Container);
+    legendContainer.width = am4core.percent(100);
+    legendContainer.height = 30;
+
+    chart.legend = new am4charts.Legend();
+    chart.legend.parent = legendContainer;
+    //chart.legend.reverseOrder = true;
+    var markerTemplate = chart.legend.markers.template;
+    markerTemplate.width = 40;
+    markerTemplate.height = 40;
+    chart.legend.position = "top";
+    chart.legend.labels.template.fontSize = 12;
+    chart.legend.labels.template.fontWeight = 500;
+    chart.legend.labels.template.fontFamily = FONT;
+
+    chart.cursor = new am4charts.XYCursor();
+
+    let scrollbarX = new am4charts.XYChartScrollbar();
+    scrollbarX.minHeight = 20;
+    chart.scrollbarX = scrollbarX;
+    chart.scrollbarX.background.fill = am4core.color("#2e3033");
+    chart.scrollbarX.background.fillOpacity = 0.2;
+    chart.scrollbarX.thumb.background.fill = am4core.color("#848f94");
+    chart.scrollbarX.thumb.background.fillOpacity = 0.2;
+    chart.scrollbarX.parent = chart.topAxesContainer;
+
+    chart.zoomOutButton.icon.disabled = true;
+    chart.zoomOutButton.icon.width = 0;
+    chart.zoomOutButton.icon.height = 0;
+};
+
+export const configEstimateChart = (chart) => {
+    chart.preloader.disabled = true;
+
+    chart.paddingRight = 30;
+
+    chart.colors.list = [
+        am4core.color("#edac15"),
+        am4core.color("#e84900"),
+        am4core.color("#1dad91"),
+        am4core.color("#0384fc"),
+        am4core.color("#848f94"),
+        am4core.color("#2e3033")
+    ];
+
+    let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+
+    const { percentAxis, temperatureAxis, calcAxis } = addEstimateAxes(chart);
+    const { virAllAxis, virNewAxis } = addVirusAxes(chart);
+
+    // Calc with visibility
+    let series = chart.series.push(new am4charts.LineSeries());
+    configCalc1Series(series);
+    series.yAxis = calcAxis;
+    series.hidden = true;
+
+    // Calc without visibility
+    series = chart.series.push(new am4charts.LineSeries());
+    configCalc2Series(series);
+    series.yAxis = calcAxis;
+    series.hidden = true;
+
+    // measure: temperature - dewpoint
+    series = chart.series.push(new am4charts.LineSeries());
+    configMeasureSeries(series);
+    series.yAxis = temperatureAxis;
+
+    // relative humidity
+    series = chart.series.push(new am4charts.LineSeries());
+    configHumiditySeries(series);
+    series.yAxis = percentAxis;
+
+    // Virus all
+    series = chart.series.push(new am4charts.LineSeries());
+    configVirusAllSeries(series);
+    series.yAxis = virAllAxis;
+
+    // Virus new
+    series = chart.series.push(new am4charts.LineSeries());
+    configVirusNewSeries(series);
+    series.yAxis = virNewAxis;
+
+    let legendContainer = am4core.create("bottomLegend", am4core.Container);
+    legendContainer.width = am4core.percent(100);
+    legendContainer.height = 30;
+
+    chart.legend = new am4charts.Legend();
+    chart.legend.parent = legendContainer;
+    //chart.legend.reverseOrder = true;
+    var markerTemplate = chart.legend.markers.template;
+    markerTemplate.width = 40;
+    markerTemplate.height = 40;
+    chart.legend.position = "bottom";
+    chart.legend.labels.template.fontSize = 12;
+    chart.legend.labels.template.fontWeight = 500;
+    chart.legend.labels.template.fontFamily = FONT;
+
+    chart.cursor = new am4charts.XYCursor();
+
+    let scrollbarX = new am4charts.XYChartScrollbar();
+    scrollbarX.minHeight = 20;
+    chart.scrollbarX = scrollbarX;
+    chart.scrollbarX.background.fill = am4core.color("#cc6e21");
+    chart.scrollbarX.background.fillOpacity = 0.2;
+    chart.scrollbarX.thumb.background.fill = am4core.color("#1d997a");
+    chart.scrollbarX.thumb.background.fillOpacity = 0.2;
+    chart.scrollbarX.parent = chart.bottomAxesContainer;
+};
+
+export const syncCalcCharts = (topChart, bottomChart) => {
+    bottomChart.zoomOutButton.events.on("hit", zoomOut);
+
+    function zoomOut(event) {
+        let dateAxis = topChart.xAxes.getIndex(0);
+        dateAxis.zoomToDates(dateAxis.min, dateAxis.max);
+    }
+
+    let dateAxis = bottomChart.xAxes.getIndex(0);
+    dateAxis.events.on("selectionextremeschanged", syncZoom);
+
+    function syncZoom(event) {
+        let dateAxis = topChart.xAxes.getIndex(0);
+        dateAxis.zoomToDates(event.target.minZoomed, event.target.maxZoomed);
+    }
+
+    for (const series of topChart.series) {
+        series.parent = bottomChart.seriesContainer;
+        series.tooltip.pointerOrientation = "left";
+    }
+    for (const series of bottomChart.series) {
+        series.tooltip.pointerOrientation = "right";
+    }
+    bottomChart.cursor.events.on("cursorpositionchanged", function(ev) {
+        topChart.cursor.triggerMove(ev.target.point, "none", true);
+    });
+};
+
+export const configCalcCharts = (virusChart, estimateChart) => {
+
+    const charts = [ virusChart, estimateChart ];
+
+    charts.forEach((chart) => {
+        chart.preloader.disabled = true;
+
+        chart.paddingRight = 30;
+
+        chart.colors.list = [
+            am4core.color("#edac15"),
+            am4core.color("#e84900"),
+            am4core.color("#1dad91"),
+            am4core.color("#0384fc"),
+            am4core.color("#848f94"),
+            am4core.color("#2e3033")
+        ];
+
+        let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+        dateAxis.renderer.opposite = (chart === virusChart);
+
+        const { percentAxis, temperatureAxis, calcAxis } = addEstimateAxes(chart);
+        const { virAllAxis, virNewAxis } = addVirusAxes(chart);
+
+        // Calc with visibility
+        let series = chart.series.push(new am4charts.LineSeries());
+        configCalc1Series(series);
+        series.yAxis = calcAxis;
+        series.hidden = true;
+
+        // Calc without visibility
+        series = chart.series.push(new am4charts.LineSeries());
+        configCalc2Series(series);
+        series.yAxis = calcAxis;
+        series.hidden = true;
+
+        // measure: temperature - dewpoint
+        series = chart.series.push(new am4charts.LineSeries());
+        configMeasureSeries(series);
+        series.yAxis = temperatureAxis;
+
+        // relative humidity
+        series = chart.series.push(new am4charts.LineSeries());
+        configHumiditySeries(series);
+        series.yAxis = percentAxis;
+
+        // Virus all
+        series = chart.series.push(new am4charts.LineSeries());
+        configVirusAllSeries(series);
+        series.yAxis = virAllAxis;
+
+        // Virus new
+        series = chart.series.push(new am4charts.LineSeries());
+        configVirusNewSeries(series);
+        series.yAxis = virNewAxis;
+
+        const legendDiv = (chart === virusChart) ? "topLegend" : "bottomLegend";
+        let legendContainer = am4core.create(legendDiv, am4core.Container);
+        legendContainer.width = am4core.percent(100);
+        legendContainer.height = 30;
+
+        chart.legend = new am4charts.Legend();
+        chart.legend.parent = legendContainer;
+        //chart.legend.reverseOrder = true;
+        var markerTemplate = chart.legend.markers.template;
+        markerTemplate.width = 40;
+        markerTemplate.height = 40;
+        chart.legend.position = (chart === virusChart) ? "top" : "bottom";
+        chart.legend.labels.template.fontSize = 12;
+        chart.legend.labels.template.fontWeight = 500;
+        chart.legend.labels.template.fontFamily = FONT;
+
+        chart.cursor = new am4charts.XYCursor();
+
+        let scrollbarX = new am4charts.XYChartScrollbar();
+        scrollbarX.minHeight = 20;
+        chart.scrollbarX = scrollbarX;
+        chart.scrollbarX.background.fill = (chart === virusChart) ? am4core.color("#2e3033") : am4core.color("#cc6e21");
+        chart.scrollbarX.background.fillOpacity = 0.2;
+        chart.scrollbarX.thumb.background.fill = (chart === virusChart) ? am4core.color("#848f94") : am4core.color("#1d997a");
+        chart.scrollbarX.thumb.background.fillOpacity = 0.2;
+        chart.scrollbarX.parent = (chart === virusChart) ? chart.topAxesContainer : chart.bottomAxesContainer;
+    });
+
+    virusChart.zoomOutButton.icon.disabled = true;
+    virusChart.zoomOutButton.icon.width = 0;
+    virusChart.zoomOutButton.icon.height = 0;
+
+    syncCalcCharts(virusChart, estimateChart);
+}
+
+export const configCalcCharts1 = (topChart, bottomChart) => {
 
     //chart.leftAxesContainer.layout = "vertical";
     //chart.rightAxesContainer.layout = "vertical";
@@ -495,7 +866,6 @@ export const configCalcCharts = (topChart, bottomChart) => {
         virAxis.strictMinMax = true;
         virAxis.marginTop = 0;
         virAxis.marginBottom = 0;
-        virAxis.renderer.opposite = true;
 
         // Calc with visibility
         let series = chart.series.push(new am4charts.LineSeries());
