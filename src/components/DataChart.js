@@ -55,7 +55,9 @@ const DataChart = ({ location, dateRange, onDataLoaded }) => {
             chart.events.on("datavalidated", function () {
                 setLoading(false);
                 certain.hide();
-                onDataLoaded(chart.data);
+                setTimeout(() => {
+                    onDataLoaded(chart.data);
+                }, 1000);
             });
         }
 

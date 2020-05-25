@@ -16,19 +16,19 @@
 
 .__Chart__ .calc-bottom-chart {
     position: absolute;
-    top: 92px;
+    bottom: 30px;
     left: 0;
     width: 100%;
 }
 
 .__Chart__ .top-chart {
     width: 100%;
-    height: calc(100vh - 280px);
+    height: calc(50vh - 80px);
 }
 
 .__Chart__ .bottom-chart {
     width: 100%;
-    height: calc(100vh - 280px);
+    height: calc(50vh - 80px);
 }
 
 .__Chart__ .top-legend {
@@ -43,4 +43,10 @@
     margin-bottom: -20px;
     width: 100%;
     height: 50px;
+}
+
+.__Chart__ .location-virus-info {
+    position: fixed;
+    bottom: 10px;
+    left: 20px;
 }

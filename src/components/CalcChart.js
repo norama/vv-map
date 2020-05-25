@@ -93,14 +93,24 @@ const avg = (arr) => (arr.reduce((a, b) => (a + b), 0) / arr.length);
 
 const fieldAvg = (arr, field) => (arr.reduce((a, b) => (a + b[field]), 0) / arr.length);
 
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
+
 const CalcChart = ({ weatherData, location, dateRange }) => {
     const [ loading, setLoading ] = useState(false);
+
+    const [ locationVirusInfo, setLocationVirusInfo ] = useState({ location: null, population: null });
 
     useEffect(() => {
 
         initCharts();
 
         charts.virus.chart.events.on("datavalidated", function () {
+            if (charts === START_CHARTS) {
+                return;
+            }
+
             setLoading(false);
             charts.virus.certain.hide();
             charts.estimate.certain.hide();
@@ -109,72 +119,84 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
 
     useEffect(() => {
         if (!weatherData) {
+            setLoading(true);
+            charts.virus.certain.show();
+            charts.estimate.certain.show();
             return;
         }
 
         // console.log('location: [' + location.lat + ', ' + location.lng + '], dateRange: ' + dateRange.startDate + ' - ' + dateRange.endDate);
 
-        resetCalcChart(charts.estimate.chart, dateRange);
-        resetCalcChart(charts.virus.chart, dateRange);
-        charts.estimate.chart.data = calcEstimates();
-        charts.virus.chart.data = [...charts.estimate.chart.data];
-        charts.estimate.chart.invalidateData();
+        setLoading(true);
+        charts.virus.certain.show();
+        charts.estimate.certain.show();
 
-    }, [ weatherData ]);
-
-    useEffect(() => {
-
-        fetchVirusSpread(location, dateRange).then((virusSpread) => {
-            if (charts.virus.chart === null) {
+        fetchVirusDataWithEstimates().then(({ data, country }) => {
+            if (charts === START_CHARTS) {
                 return;
             }
 
-            //resetCalcChart(charts.virus.chart, dateRange);
+            const delta = getRandomInt(12) + 1;
+            resetCalcChart(charts.estimate.chart, dateRange, delta);
+            resetCalcChart(charts.virus.chart, dateRange, delta);
 
-            //charts.virus.chart.data = virusData(virusSpread);
+            charts.virus.chart.data = data;
+            charts.estimate.chart.data = data;
+            setLocationVirusInfo({ location: country.name, population: country.population });
         }).catch((error) => {
-            if (charts.virus.chart === null) {
+            if (charts === START_CHARTS) {
                 return;
             }
 
             resetCalcChart(charts.virus.chart, dateRange);
+            resetCalcChart(charts.estimate.chart, dateRange);
 
-            //charts.virus.chart.data = [];
+            charts.virus.chart.data = [];
+            charts.estimate.chart.data = [];
 
             alert(JSON.stringify(error));
         }).finally(() => {
             charts.virus.chart.invalidateData();
-        });
-    }, [ location.lat, location.lng, dateRange.startDate, dateRange.endDate ])
-
-    const virusData = (virusSpread) => {
-        return [];
-    }
-
-    const calcEstimates = () => {
-
-        let data = [];
-
-        weatherData.forEach((hour) => {
-            const hourData = {
-                temp: hour.tempC,
-                wind: hour.windspeedKmph / MILE,
-                vis: hour.visibility / MILE,
-                dewpoint: hour.DewPointC,
-                humidity: hour.Humidity / 100
-            };
-            hourData.rh = hourData.humidity; //calcRH(hourData.dewpoint, hourData.temp);
-            let item = {
-                date: hour.date,
-                calc1: calc1(hourData),
-                calc2: calc2(hourData),
-                measure: hourData.dewpoint - hourData.temp,
-                Humidity: hourData.humidity * 100
-            }
-            data.push(item)
+            charts.estimate.chart.invalidateData();
         });
 
-        return data;
+    }, [ weatherData ]);
+
+    const fetchVirusDataWithEstimates = () => {
+
+        return fetchVirusSpread(location, dateRange).then((country) => {
+            let data = [];
+            let day = null;
+
+            weatherData.forEach((hour) => {
+                const hourData = {
+                    temp: hour.tempC,
+                    wind: hour.windspeedKmph / MILE,
+                    vis: hour.visibility / MILE,
+                    dewpoint: hour.DewPointC,
+                    humidity: hour.Humidity / 100
+                };
+                hourData.rh = hourData.humidity; //calcRH(hourData.dewpoint, hourData.temp);
+                let item = {
+                    date: hour.date,
+                    calc1: calc1(hourData),
+                    calc2: calc2(hourData),
+                    measure: hourData.dewpoint - hourData.temp,
+                    Humidity: hourData.humidity * 100
+                }
+                const virusDay = country.timelineMap[item.date];
+                if (virusDay) {
+                    day = virusDay;
+                }
+                if (day) {
+                    item.confirmed = day.confirmed;
+                    item.new_confirmed = day.new_confirmed;
+                }
+                data.push(item);
+            });
+
+            return { data, country };
+        });
     };
 
     const calcDataPerDay = () => {
@@ -207,15 +229,18 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
 
     return (
         <div className="__Chart__">
-            <Loader loading={loading} />
-            <div className="calc-top-chart">
-                <div id="topLegend" className="top-legend"></div>
-                <div id="virusChart" className="top-chart"></div>
+            <div className="chart">
+                <div className="calc-top-chart">
+                    <Loader loading={loading} />
+                    <div id="topLegend" className="top-legend"></div>
+                    <div id="virusChart" className="top-chart"></div>
+                </div>
+                <div className="calc-bottom-chart">
+                    <div id="estimateChart" className="bottom-chart"></div>
+                    <div id="bottomLegend" className="bottom-legend"></div>
+                </div>
             </div>
-            <div className="calc-bottom-chart">
-                <div id="estimateChart" className="bottom-chart"></div>
-                <div id="bottomLegend" className="bottom-legend"></div>
-            </div>
+            <div className="location-virus-info">{locationVirusInfo.location}</div>
         </div>
     );
 };

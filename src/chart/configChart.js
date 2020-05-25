@@ -58,15 +58,15 @@ function configWindBullet(bullet, showSize=true) {
     hoverState.properties.scale = 2;
 }
 
-function configDateAxis(dateAxis, startDate, endDate, dateFormat) {
+function configDateAxis(dateAxis, startDate, endDate, dateFormat, delta=6) {
     dateAxis.renderer.grid.template.disabled = true;
     //dateAxis.renderer.labels.template.disabled = true;
 
     let beforeStartDate = subDays(new Date(startDate), 1);
-    beforeStartDate.setHours(18);
+    beforeStartDate.setHours(24 - delta);
 
     let afterEndDate = addDays(new Date(endDate), 1);
-    afterEndDate.setHours(6);
+    afterEndDate.setHours(delta);
 
     dateAxis.min = beforeStartDate.getTime();
     dateAxis.max = afterEndDate.getTime();
@@ -87,8 +87,6 @@ function configDateAxis(dateAxis, startDate, endDate, dateFormat) {
         { timeUnit: "year", count: 1 },
         { timeUnit: "year", count: 10 }
     ]);
-
-    dateAxis.zoomToDates(dateAxis.min, dateAxis.max);
 }
 
 function configPictogramAxis(pictogramAxis) {
@@ -254,7 +252,8 @@ export function createCertain(chart) {
 }
 
 export function configDateRange(chart, dateRange, dateFormat) {
-    configDateAxis(chart.xAxes.getIndex(0), dateRange.startDate, dateRange.endDate, dateFormat);
+    const dateAxis = chart.xAxes.getIndex(0);
+    configDateAxis(dateAxis, dateRange.startDate, dateRange.endDate, dateFormat);
 }
 
 export const configDataChart = (chart) => {
@@ -409,6 +408,18 @@ function configCalcAxis(calcAxis) {
     calcAxis.renderer.minGridDistance = 30;
 }
 
+function configCalcRefAxis(calcAxis) {
+    configCalcAxis(calcAxis);
+    calcAxis.title.text = "Calc (ref below)";
+    calcAxis.marginTop = 0;
+    calcAxis.strictMinMax = true;
+    calcAxis.marginBottom = 0;
+    calcAxis.renderer.line.stroke = am4core.color("#edac15");
+    calcAxis.renderer.labels.template.fill = am4core.color("#edac15");
+    calcAxis.title.fill = am4core.color("#e84900");
+    calcAxis.renderer.opposite = true;
+}
+
 function configCalc1Series(series) {
     series.name = "with visibility";
     series.dataFields.dateX = "date";
@@ -451,10 +462,6 @@ function configVirusAllSeries(series) {
     series.dataFields.valueY = "confirmed";
     series.tooltipText = "all confirmed: {confirmed}";
     series.strokeWidth = 3;
-
-    series.minBulletDistance = 10;
-    let bullet = series.bullets.push(new am4charts.Bullet());
-    configCircleBullet(bullet);
 }
 
 function configVirusNewSeries(series) {
@@ -463,13 +470,12 @@ function configVirusNewSeries(series) {
     series.dataFields.valueY = "new_confirmed";
     series.tooltipText = "new confirmed: {new_confirmed}";
     series.strokeWidth = 3;
-
-    series.minBulletDistance = 10;
-    let bullet = series.bullets.push(new am4charts.Bullet());
-    configCircleBullet(bullet);
 }
 
 const addVirusAxes = (chart) => {
+
+    let calcAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    configCalcRefAxis(calcAxis);
 
     let virAllAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configCalcAxis(virAllAxis);
@@ -481,11 +487,12 @@ const addVirusAxes = (chart) => {
     virAllAxis.renderer.line.stroke = am4core.color("#848f94");
     virAllAxis.renderer.labels.template.fill = am4core.color("#848f94");
     virAllAxis.title.fill = am4core.color("#848f94");
+    virAllAxis.renderer.opposite = true;
 
     let virNewAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configCalcAxis(virNewAxis);
     virNewAxis.title.text = "Virus New";
-    //virNewAxis.strictMinMax = true;
+    virNewAxis.strictMinMax = true;
     virNewAxis.marginTop = 0;
     virNewAxis.marginBottom = 0;
     //virNewAxis.renderer.opposite = true;
@@ -493,10 +500,13 @@ const addVirusAxes = (chart) => {
     virNewAxis.renderer.labels.template.fill = am4core.color("#2e3033");
     virNewAxis.title.fill = am4core.color("#2e3033");
 
-    return { virAllAxis, virNewAxis };
+    return { virAllAxis, virNewAxis, calcAxis };
 };
 
 const addEstimateAxes = (chart) => {
+
+    let calcAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    configCalcRefAxis(calcAxis);
 
     let percentAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configPercentAxis(percentAxis);
@@ -517,18 +527,6 @@ const addEstimateAxes = (chart) => {
     temperatureAxis.renderer.line.stroke = am4core.color("#1dad91");
     temperatureAxis.renderer.labels.template.fill = am4core.color("#1dad91");
     temperatureAxis.title.fill = am4core.color("#1dad91");
-    temperatureAxis.renderer.opposite = true;
-
-    let calcAxis = chart.yAxes.push(new am4charts.ValueAxis());
-    configCalcAxis(calcAxis);
-    calcAxis.title.text = "Calc (ref below)";
-    calcAxis.marginTop = 0;
-    calcAxis.strictMinMax = true;
-    calcAxis.marginBottom = 0;
-    calcAxis.renderer.line.stroke = am4core.color("#edac15");
-    calcAxis.renderer.labels.template.fill = am4core.color("#edac15");
-    calcAxis.title.fill = am4core.color("#e84900");
-    calcAxis.renderer.opposite = true;
 
     return { percentAxis, temperatureAxis, calcAxis };
 };
@@ -548,106 +546,170 @@ const syncCalcCharts = (topChart, bottomChart) => {
         let dateAxis = topChart.xAxes.getIndex(0);
         dateAxis.zoomToDates(event.target.minZoomed, event.target.maxZoomed);
     }
-
+/*
     for (const series of topChart.series) {
-        series.parent = bottomChart.seriesContainer;
         series.tooltip.pointerOrientation = "left";
     }
     for (const series of bottomChart.series) {
         series.tooltip.pointerOrientation = "right";
     }
+*/
     bottomChart.cursor.events.on("cursorpositionchanged", function(ev) {
         topChart.cursor.triggerMove(ev.target.point, "none", true);
     });
 };
 
+const configVirusChart = (chart) => {
+    chart.preloader.disabled = true;
+
+    chart.paddingRight = 30;
+
+    chart.colors.list = [
+        am4core.color("#edac15"),
+        am4core.color("#e84900"),
+        am4core.color("#848f94"),
+        am4core.color("#2e3033")
+    ];
+
+    let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+    dateAxis.renderer.opposite = true;
+
+    const { virAllAxis, virNewAxis, calcAxis } = addVirusAxes(chart);
+
+    // Calc with visibility
+    let series = chart.series.push(new am4charts.LineSeries());
+    configCalc1Series(series);
+    series.yAxis = calcAxis;
+    series.hidden = true;
+
+    // Calc without visibility
+    series = chart.series.push(new am4charts.LineSeries());
+    configCalc2Series(series);
+    series.yAxis = calcAxis;
+    series.hidden = true;
+
+    // Virus all
+    series = chart.series.push(new am4charts.StepLineSeries());
+    configVirusAllSeries(series);
+    series.yAxis = virAllAxis;
+    series.hidden = true;
+
+    // Virus new
+    let mseries = chart.series.push(new am4charts.StepLineSeries());
+    configVirusNewSeries(mseries);
+    mseries.yAxis = virNewAxis;
+
+    let legendContainer = am4core.create("topLegend", am4core.Container);
+    legendContainer.width = am4core.percent(100);
+    legendContainer.height = 30;
+
+    chart.legend = new am4charts.Legend();
+    chart.legend.parent = legendContainer;
+    //chart.legend.reverseOrder = true;
+    var markerTemplate = chart.legend.markers.template;
+    markerTemplate.width = 40;
+    markerTemplate.height = 40;
+    chart.legend.position = "top";
+    chart.legend.labels.template.fontSize = 12;
+    chart.legend.labels.template.fontWeight = 500;
+    chart.legend.labels.template.fontFamily = FONT;
+
+    chart.cursor = new am4charts.XYCursor();
+    /*
+    chart.cursor.xAxis = dateAxis;
+    chart.cursor.fullWidthLineX = true;
+    chart.cursor.lineX.strokeWidth = 0;
+    chart.cursor.lineX.fill = am4core.color("#848f94");
+    chart.cursor.lineX.fillOpacity = 0.1;
+    */
+
+    let scrollbarX = new am4charts.XYChartScrollbar();
+    scrollbarX.minHeight = 10;
+    //scrollbarX.series.push(mseries);
+    chart.scrollbarX = scrollbarX;
+    chart.scrollbarX.background.fill = am4core.color("#2e3033");
+    chart.scrollbarX.background.fillOpacity = 0.2;
+    chart.scrollbarX.thumb.background.fill = am4core.color("#848f94");
+    chart.scrollbarX.thumb.background.fillOpacity = 0.2;
+    chart.scrollbarX.parent = chart.topAxesContainer;
+
+    chart.rightAxesContainer.width = 150;
+    chart.leftAxesContainer.width = 100;
+};
+
+const configEstimateChart = (chart) => {
+    chart.preloader.disabled = true;
+
+    chart.paddingRight = 30;
+
+    chart.colors.list = [
+        am4core.color("#edac15"),
+        am4core.color("#e84900"),
+        am4core.color("#1dad91"),
+        am4core.color("#0384fc")
+    ];
+
+    let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+
+    const { percentAxis, temperatureAxis, calcAxis } = addEstimateAxes(chart);
+
+    // Calc with visibility
+    let series = chart.series.push(new am4charts.LineSeries());
+    configCalc1Series(series);
+    series.yAxis = calcAxis;
+    series.hidden = true;
+
+    // Calc without visibility
+    series = chart.series.push(new am4charts.LineSeries());
+    configCalc2Series(series);
+    series.yAxis = calcAxis;
+    series.hidden = true;
+
+    // measure: temperature - dewpoint
+    let mseries = chart.series.push(new am4charts.LineSeries());
+    configMeasureSeries(mseries);
+    mseries.yAxis = temperatureAxis;
+
+    // relative humidity
+    series = chart.series.push(new am4charts.LineSeries());
+    configHumiditySeries(series);
+    series.yAxis = percentAxis;
+
+    let legendContainer = am4core.create("bottomLegend", am4core.Container);
+    legendContainer.width = am4core.percent(100);
+    legendContainer.height = 30;
+
+    chart.legend = new am4charts.Legend();
+    chart.legend.parent = legendContainer;
+    //chart.legend.reverseOrder = true;
+    var markerTemplate = chart.legend.markers.template;
+    markerTemplate.width = 40;
+    markerTemplate.height = 40;
+    chart.legend.position = "bottom";
+    chart.legend.labels.template.fontSize = 12;
+    chart.legend.labels.template.fontWeight = 500;
+    chart.legend.labels.template.fontFamily = FONT;
+
+    chart.cursor = new am4charts.XYCursor();
+
+    let scrollbarX = new am4charts.XYChartScrollbar();
+    scrollbarX.minHeight = 10;
+    //scrollbarX.series.push(mseries);
+    chart.scrollbarX = scrollbarX;
+    chart.scrollbarX.background.fill = am4core.color("#cc6e21");
+    chart.scrollbarX.background.fillOpacity = 0.2;
+    chart.scrollbarX.thumb.background.fill = am4core.color("#1d997a");
+    chart.scrollbarX.thumb.background.fillOpacity = 0.2;
+    chart.scrollbarX.parent = chart.bottomAxesContainer;
+
+    chart.rightAxesContainer.width = 150;
+    chart.leftAxesContainer.width = 100;
+};
+
 export const configCalcCharts = (virusChart, estimateChart) => {
 
-    const charts = [ virusChart, estimateChart ];
-
-    charts.forEach((chart) => {
-        chart.preloader.disabled = true;
-
-        chart.paddingRight = 30;
-
-        chart.colors.list = [
-            am4core.color("#edac15"),
-            am4core.color("#e84900"),
-            am4core.color("#1dad91"),
-            am4core.color("#0384fc"),
-            am4core.color("#848f94"),
-            am4core.color("#2e3033")
-        ];
-
-        let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-        dateAxis.renderer.opposite = (chart === virusChart);
-
-        const { percentAxis, temperatureAxis, calcAxis } = addEstimateAxes(chart);
-        const { virAllAxis, virNewAxis } = addVirusAxes(chart);
-
-        // Calc with visibility
-        let series = chart.series.push(new am4charts.LineSeries());
-        configCalc1Series(series);
-        series.yAxis = calcAxis;
-        series.hidden = true;
-
-        // Calc without visibility
-        series = chart.series.push(new am4charts.LineSeries());
-        configCalc2Series(series);
-        series.yAxis = calcAxis;
-        series.hidden = true;
-
-        // measure: temperature - dewpoint
-        series = chart.series.push(new am4charts.LineSeries());
-        configMeasureSeries(series);
-        series.yAxis = temperatureAxis;
-
-        // relative humidity
-        series = chart.series.push(new am4charts.LineSeries());
-        configHumiditySeries(series);
-        series.yAxis = percentAxis;
-
-        // Virus all
-        series = chart.series.push(new am4charts.LineSeries());
-        configVirusAllSeries(series);
-        series.yAxis = virAllAxis;
-
-        // Virus new
-        series = chart.series.push(new am4charts.LineSeries());
-        configVirusNewSeries(series);
-        series.yAxis = virNewAxis;
-
-        const legendDiv = (chart === virusChart) ? "topLegend" : "bottomLegend";
-        let legendContainer = am4core.create(legendDiv, am4core.Container);
-        legendContainer.width = am4core.percent(100);
-        legendContainer.height = 30;
-
-        chart.legend = new am4charts.Legend();
-        chart.legend.parent = legendContainer;
-        //chart.legend.reverseOrder = true;
-        var markerTemplate = chart.legend.markers.template;
-        markerTemplate.width = 40;
-        markerTemplate.height = 40;
-        chart.legend.position = (chart === virusChart) ? "top" : "bottom";
-        chart.legend.labels.template.fontSize = 12;
-        chart.legend.labels.template.fontWeight = 500;
-        chart.legend.labels.template.fontFamily = FONT;
-
-        chart.cursor = new am4charts.XYCursor();
-
-        let scrollbarX = new am4charts.XYChartScrollbar();
-        scrollbarX.minHeight = 20;
-        chart.scrollbarX = scrollbarX;
-        chart.scrollbarX.background.fill = (chart === virusChart) ? am4core.color("#2e3033") : am4core.color("#cc6e21");
-        chart.scrollbarX.background.fillOpacity = 0.2;
-        chart.scrollbarX.thumb.background.fill = (chart === virusChart) ? am4core.color("#848f94") : am4core.color("#1d997a");
-        chart.scrollbarX.thumb.background.fillOpacity = 0.2;
-        chart.scrollbarX.parent = (chart === virusChart) ? chart.topAxesContainer : chart.bottomAxesContainer;
-    });
-
-    virusChart.zoomOutButton.icon.disabled = true;
-    virusChart.zoomOutButton.icon.width = 0;
-    virusChart.zoomOutButton.icon.height = 0;
+    configVirusChart(virusChart);
+    configEstimateChart(estimateChart);
 
     syncCalcCharts(virusChart, estimateChart);
 }

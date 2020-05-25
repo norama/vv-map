@@ -16,9 +16,15 @@ const Weather = ({ location, dateRange, name }) => {
 
     const [ data, setData ] = useState(null);
     const [ activeTab, setActiveTab ] = useState('1');
+    const [ activateCalc, setActivateCalc ] = useState(false);
 
     const toggle = (tab) => {
-        if (activeTab !== tab) setActiveTab(tab);
+        if (activeTab !== tab) {
+            setActiveTab(tab);
+            if (!activateCalc) {
+                setActivateCalc(true);
+            }
+        }
     };
 
     useEffect(() => {
@@ -28,6 +34,7 @@ const Weather = ({ location, dateRange, name }) => {
     useEffect(() => {
         setData(null);
         setActiveTab('1');
+        setActivateCalc(false);
     }, [ location.lat, location.lng, dateRange.startDate, dateRange.endDate, name ]);
 
     const handleParameters = () => {
@@ -83,7 +90,7 @@ const Weather = ({ location, dateRange, name }) => {
                         <DataChart location={location} dateRange={dateRange} onDataLoaded={setData} />
                     </TabPane>
                     <TabPane tabId="2">
-                        <CalcChart weatherData={data} location={location} dateRange={dateRange} />
+                        <CalcChart weatherData={activateCalc ? data : null} location={location} dateRange={dateRange} />
                     </TabPane>
                 </TabContent>
             <a href={reference.url} className="weather-reference" target="_blank" rel="noopener noreferrer">{reference.text}</a>
