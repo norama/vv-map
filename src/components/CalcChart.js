@@ -15,6 +15,8 @@ import './Chart.css';
 
 //am4core.useTheme(theme);
 
+const DAY = 24 * 3600000;
+
 // https://www.medrxiv.org/content/10.1101/2020.03.16.20037168v1.full.pdf
 
 const MILE = 1.60934;
@@ -166,7 +168,7 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
 
         return fetchVirusSpread(location, dateRange).then((country) => {
             let data = [];
-            let day = null;
+            let lastDayItem = null;
 
             weatherData.forEach((hour) => {
                 const hourData = {
@@ -182,15 +184,24 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
                     calc1: calc1(hourData),
                     calc2: calc2(hourData),
                     measure: hourData.dewpoint - hourData.temp,
-                    Humidity: hourData.humidity * 100
+                    Humidity: hour.Humidity,
+                    cloudcover: hour.cloudcover,
                 }
                 const virusDay = country.timelineMap[item.date];
                 if (virusDay) {
-                    day = virusDay;
-                }
-                if (day) {
-                    item.confirmed = day.confirmed;
-                    item.new_confirmed = day.new_confirmed;
+                    item.confirmed = virusDay.confirmed;
+                    item.new_confirmed = virusDay.new_confirmed;
+
+                    lastDayItem = item;
+                } else {
+                    if (lastDayItem) {
+                        item.confirmed = lastDayItem.confirmed;
+                        item.new_confirmed = (item.date - lastDayItem.date < DAY) ?
+                            lastDayItem.new_confirmed : 0;
+                    } else {
+                        item.confirmed = 0;
+                        item.new_confirmed = 0;
+                    }
                 }
                 data.push(item);
             });

@@ -353,7 +353,6 @@ export const configDataChart = (chart) => {
     series = chart.series.push(new am4charts.LineSeries());
     configCloudCoverSeries(series);
     series.yAxis = percentAxis;
-    //scrollbarX.series.push(series);
     percentAxis.title.fill = series.stroke;
 
 /*
@@ -484,9 +483,9 @@ const addVirusAxes = (chart) => {
     virAllAxis.marginTop = 0;
     virAllAxis.marginBottom = 0;
     //virAllAxis.renderer.opposite = true;
-    virAllAxis.renderer.line.stroke = am4core.color("#848f94");
-    virAllAxis.renderer.labels.template.fill = am4core.color("#848f94");
-    virAllAxis.title.fill = am4core.color("#848f94");
+    virAllAxis.renderer.line.stroke = am4core.color("#521d75");
+    virAllAxis.renderer.labels.template.fill = am4core.color("#521d75");
+    virAllAxis.title.fill = am4core.color("#521d75");
     virAllAxis.renderer.opposite = true;
 
     let virNewAxis = chart.yAxes.push(new am4charts.ValueAxis());
@@ -565,10 +564,10 @@ const configVirusChart = (chart) => {
     chart.paddingRight = 30;
 
     chart.colors.list = [
+        am4core.color("#2e3033"),
+        am4core.color("#521d75"),
         am4core.color("#edac15"),
         am4core.color("#e84900"),
-        am4core.color("#848f94"),
-        am4core.color("#2e3033")
     ];
 
     let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
@@ -576,8 +575,19 @@ const configVirusChart = (chart) => {
 
     const { virAllAxis, virNewAxis, calcAxis } = addVirusAxes(chart);
 
+    // Virus new
+    let mseries = chart.series.push(new am4charts.StepLineSeries());
+    configVirusNewSeries(mseries);
+    mseries.yAxis = virNewAxis;
+
+    // Virus all
+    let series = chart.series.push(new am4charts.StepLineSeries());
+    configVirusAllSeries(series);
+    series.yAxis = virAllAxis;
+    series.hidden = true;
+
     // Calc with visibility
-    let series = chart.series.push(new am4charts.LineSeries());
+    series = chart.series.push(new am4charts.LineSeries());
     configCalc1Series(series);
     series.yAxis = calcAxis;
     series.hidden = true;
@@ -587,17 +597,6 @@ const configVirusChart = (chart) => {
     configCalc2Series(series);
     series.yAxis = calcAxis;
     series.hidden = true;
-
-    // Virus all
-    series = chart.series.push(new am4charts.StepLineSeries());
-    configVirusAllSeries(series);
-    series.yAxis = virAllAxis;
-    series.hidden = true;
-
-    // Virus new
-    let mseries = chart.series.push(new am4charts.StepLineSeries());
-    configVirusNewSeries(mseries);
-    mseries.yAxis = virNewAxis;
 
     let legendContainer = am4core.create("topLegend", am4core.Container);
     legendContainer.width = am4core.percent(100);
@@ -643,18 +642,35 @@ const configEstimateChart = (chart) => {
     chart.paddingRight = 30;
 
     chart.colors.list = [
+        am4core.color("#1dad91"),
+        am4core.color("#0384fc"),
+        am4core.color("#6f9ec9"),
         am4core.color("#edac15"),
         am4core.color("#e84900"),
-        am4core.color("#1dad91"),
-        am4core.color("#0384fc")
     ];
 
     let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
 
     const { percentAxis, temperatureAxis, calcAxis } = addEstimateAxes(chart);
 
-    // Calc with visibility
+    // measure: temperature - dewpoint
+    let mseries = chart.series.push(new am4charts.LineSeries());
+    configMeasureSeries(mseries);
+    mseries.yAxis = temperatureAxis;
+
+    // relative humidity
     let series = chart.series.push(new am4charts.LineSeries());
+    configHumiditySeries(series);
+    series.yAxis = percentAxis;
+
+    // Cloud cover
+    series = chart.series.push(new am4charts.LineSeries());
+    configCloudCoverSeries(series);
+    series.yAxis = percentAxis;
+    percentAxis.title.fill = series.stroke;
+
+    // Calc with visibility
+    series = chart.series.push(new am4charts.LineSeries());
     configCalc1Series(series);
     series.yAxis = calcAxis;
     series.hidden = true;
@@ -664,16 +680,6 @@ const configEstimateChart = (chart) => {
     configCalc2Series(series);
     series.yAxis = calcAxis;
     series.hidden = true;
-
-    // measure: temperature - dewpoint
-    let mseries = chart.series.push(new am4charts.LineSeries());
-    configMeasureSeries(mseries);
-    mseries.yAxis = temperatureAxis;
-
-    // relative humidity
-    series = chart.series.push(new am4charts.LineSeries());
-    configHumiditySeries(series);
-    series.yAxis = percentAxis;
 
     let legendContainer = am4core.create("bottomLegend", am4core.Container);
     legendContainer.width = am4core.percent(100);
