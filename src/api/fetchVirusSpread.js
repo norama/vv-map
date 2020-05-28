@@ -47,11 +47,22 @@ function nearestCountry(location, countries) {
     return res;
 }
 
+function fetchCountryCode(location) {
+    return fetch(`${process.env.REACT_APP_GEONAMES_COUNTRY_URL}?username=${process.env.REACT_APP_GEONAMES_USERNAME}` +
+                 `&lat=${location.lat}&lng=${location.lng}`)
+            .then((response) => (response.text()))
+            .then((text) => (text.trim()));
+}
+
 function fetchVirusSpread(location, dateRange) {
     return getFetched(process.env.REACT_APP_VIRUS_MAIN_URL, 'virusSpreadCountriesTimeline', transformVirusSpreadCountriesTimeline).then((countries) => {
-        const country = nearestCountry(location, countries);
-        console.log("Nearest country", country);
-        return country;
+        return fetchCountryCode(location).then((code) => {
+            const country = countries.find((c) => (c.code === code));
+            if (!country) {
+                throw { error: "country with code: " + code + " not found" };
+            }
+            return country;
+        });
     });
 }
 
