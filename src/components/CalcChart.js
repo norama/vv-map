@@ -133,7 +133,7 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
         charts.virus.certain.show();
         charts.estimate.certain.show();
 
-        fetchVirusDataWithEstimates().then(({ data, country }) => {
+        fetchVirusDataWithEstimates().then(({ data, country, province, population }) => {
             if (charts === START_CHARTS) {
                 return;
             }
@@ -144,7 +144,7 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
 
             charts.virus.chart.data = data;
             charts.estimate.chart.data = data;
-            setLocationVirusInfo({ location: country.name, population: country.population });
+            setLocationVirusInfo({ location: country + (province ? ' - ' + province : ''), population });
         }).catch((error) => {
             if (charts === START_CHARTS) {
                 return;
@@ -156,7 +156,13 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
             charts.virus.chart.data = [];
             charts.estimate.chart.data = [];
 
-            alert(JSON.stringify(error));
+            console.error(error);
+            const errorJson = JSON.stringify(error);
+            if (errorJson !== '{}') {
+                alert(errorJson);
+            } else {
+                alert('ERROR: see console for details.')
+            }
         }).finally(() => {
             charts.virus.chart.invalidateData();
             charts.estimate.chart.invalidateData();
@@ -166,7 +172,7 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
 
     const fetchVirusDataWithEstimates = () => {
 
-        return fetchVirusSpread(location, dateRange).then((country) => {
+        return fetchVirusSpread(location, dateRange).then((locationData) => {
             let data = [];
             let lastDayItem = null;
 
@@ -187,7 +193,7 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
                     Humidity: hour.Humidity,
                     cloudcover: hour.cloudcover,
                 }
-                const virusDay = country.timelineMap[item.date];
+                const virusDay = locationData.timelineMap[item.date];
                 if (virusDay) {
                     item.confirmed = virusDay.confirmed;
                     item.new_confirmed = virusDay.new_confirmed;
@@ -206,7 +212,12 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
                 data.push(item);
             });
 
-            return { data, country };
+            return {
+                country: locationData.country,
+                province: locationData.province,
+                population: locationData.population,
+                data
+            };
         });
     };
 
@@ -251,7 +262,7 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
                     <div id="bottomLegend" className="bottom-legend"></div>
                 </div>
             </div>
-            <div className="location-virus-info">{locationVirusInfo.location}</div>
+            <div className="location-virus-info">{loading ? null : locationVirusInfo.location}</div>
         </div>
     );
 };

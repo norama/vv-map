@@ -7,6 +7,8 @@ import theme from "@amcharts/amcharts4/themes/animated";
 import { configDataChart, createCertain } from '../chart/configChart';
 import { resetDataChart } from '../chart/manageChart';
 
+import { dateMillis } from '../util/date';
+
 import fetchWeather from '../api/fetchWeather';
 
 import Loader from './Loader';
@@ -16,13 +18,6 @@ import './Chart.css';
 //am4core.useTheme(theme);
 
 const THREE_HOURS = 3 * 3600000;
-
-function formatTime(date, hour) {
-    if (hour === "0") {
-        hour = "000";
-    }
-    return new Date(date + ' ' + hour.substring(0, hour.length-2) + ':00');
-}
 
 let chart = null;
 let certain = null;
@@ -91,7 +86,7 @@ const DataChart = ({ location, dateRange, onDataLoaded }) => {
 
         weather.forEach((day, i) => {
             if (millis === 0) {
-                millis = new Date(day.date).getTime();
+                millis = dateMillis(day.date);
             }
 
             day.hourly.forEach((hour) => {

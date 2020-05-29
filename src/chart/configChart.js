@@ -3,6 +3,7 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 
 import { addDays, subDays } from 'date-fns';
+import { dateMillis } from '../util/date';
 
 const DEGREE = "\u00B0";
 const FONT = "DejaVu Sans Mono";
@@ -62,17 +63,17 @@ function configDateAxis(dateAxis, startDate, endDate, dateFormat, delta=6) {
     dateAxis.renderer.grid.template.disabled = true;
     //dateAxis.renderer.labels.template.disabled = true;
 
-    let beforeStartDate = subDays(new Date(startDate), 1);
+    let beforeStartDate = subDays(dateMillis(startDate), 1);
     beforeStartDate.setHours(24 - delta);
 
-    let afterEndDate = addDays(new Date(endDate), 1);
+    let afterEndDate = addDays(dateMillis(endDate), 1);
     afterEndDate.setHours(delta);
 
     dateAxis.min = beforeStartDate.getTime();
     dateAxis.max = afterEndDate.getTime();
     dateAxis.strictMinMax = true;
 
-    dateAxis.renderer.labels.template.location = 0.5;
+    //dateAxis.renderer.labels.template.location = 0.5;
 
     dateAxis.tooltipDateFormat = dateFormat;
 
@@ -83,6 +84,10 @@ function configDateAxis(dateAxis, startDate, endDate, dateFormat, delta=6) {
         { timeUnit: "hour", count: 3 },
         { timeUnit: "hour", count: 6 },
         { timeUnit: "hour", count: 12 },
+        { timeUnit: "day", count: 1 },
+        { timeUnit: "day", count: 3 },
+        { timeUnit: "day", count: 6 },
+        { timeUnit: "day", count: 15 },
         { timeUnit: "month", count: 1 },
         { timeUnit: "year", count: 1 },
         { timeUnit: "year", count: 10 }
