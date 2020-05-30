@@ -1,5 +1,5 @@
 import { ISO_2_TO_3 } from '../util/countries';
-import { distance2 } from '../util/geo';
+import { distance } from '../util/geo';
 import { datesInRange, dateString, dateMillis } from '../util/date';
 import { chain } from '../util/promise';
 
@@ -34,12 +34,27 @@ function getFetched(url, key, transform = identity) {
     });
 }
 
+function nearestCountry(location, countries) {
+    let minDist = Number.POSITIVE_INFINITY;
+    let res = null;
+
+    countries.forEach((country) => {
+        const dist = distance(location.lat, location.lng, country.coordinates.latitude, country.coordinates.longitude);
+        if (dist < minDist) {
+            minDist = dist;
+            res = country;
+        }
+    });
+
+    return res;
+}
+
 function nearestProvince(location, provinces) {
     let minDist = Number.POSITIVE_INFINITY;
     let res = null;
 
     provinces.forEach((province) => {
-        const dist = distance2(location.lat, location.lng, province.lat, province.lng);
+        const dist = distance(location.lat, location.lng, province.lat, province.lng);
         if (dist < minDist) {
             minDist = dist;
             res = province;
@@ -75,13 +90,13 @@ const virusSpreadForCountry = (country, dateRange) => {
     return Object.keys(country.timelineMap).reduce((acc, millis) => {
         if (startMillis <= millis && millis <= endMillis) {
             const item = country.timelineMap[millis];
-            acc[dateMillis] = {
+            acc[millis] = {
                 confirmed: item.confirmed,
                 new_confirmed: item.new_confirmed
             };
         }
         return acc;
-    }, {})
+    }, {});
 };
 
 function fetchVirusSpreadForProvince(province, dateRange) {
@@ -126,35 +141,45 @@ function fetchVirusSpreadForProvince(province, dateRange) {
 
 function fetchVirusSpread(location, dateRange) {
 
-    return getFetched(process.env.REACT_APP_VIRUS_MAIN_URL, 'virusSpreadCountriesTimeline', transformVirusSpreadCountriesTimeline).then((countries) => {
-        return fetchCountryCode(location).then((code) => {
-            const country = countries.find((c) => (c.code === code));
-            if (!country) {
-                throw { error: "country with code: " + code + " not found" };
-            }
-            console.log('country data', country);
+    return getFetched(process.env.REACT_APP_VIRUS_MAIN_URL, 'virusSpreadCountriesTimeline', transformVirusSpreadCountriesTimeline)
+        .then((countries) => {
+            return fetchCountryCode(location, countries)
+                .then((code) => {
+                    const country = countries.find((c) => (c.code === code));
+                    if (!country) {
+                        throw "country with code: " + code + " not found";
+                    }
+                    return country;
+                })
+                .catch((error) => {
+                    console.log('country code error, taking closest country', error);
+                    return nearestCountry(location, countries);
+                })
+                .then((country) => {
 
-            return fetchProvinces(country.iso3).then((provinces) => {
-                console.log('provinces', provinces);
-                if (provinces.length <= 1) {
-                    return {
-                        country: country.name,
-                        population: country.population,
-                        timelineMap: virusSpreadForCountry(country, dateRange)
-                    };
-                } else {
-                    const province = nearestProvince(location, provinces);
-                    return fetchVirusSpreadForProvince(province, dateRange).then((timelineMap) => {
-                        return {
-                            country: country.name,
-                            province: province.name,
-                            timelineMap
-                        };
+                    console.log('country data', country);
+
+                    return fetchProvinces(country.iso3).then((provinces) => {
+                        console.log('provinces', provinces);
+                        if (provinces.length <= 1) {
+                            return {
+                                country: country.name,
+                                population: country.population,
+                                timelineMap: virusSpreadForCountry(country, dateRange)
+                            };
+                        } else {
+                            const province = nearestProvince(location, provinces);
+                            return fetchVirusSpreadForProvince(province, dateRange).then((timelineMap) => {
+                                return {
+                                    country: country.name,
+                                    province: province.name,
+                                    timelineMap
+                                };
+                            });
+                        }
                     });
-                }
-            });
+                });
         });
-    });
 }
 
 export default fetchVirusSpread;

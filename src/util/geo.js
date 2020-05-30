@@ -8,6 +8,11 @@ export function distance2(lat, lon, lat0, lon0) {
     return deglen2 * (x*x + y*y);
 }
 
+export function distance(lat, lon, lat0, lon0) {
+    const x = lat - lat0;
+    const y = lon - lon0;
+    return x*x + y*y;
+}
 
 // https://stackoverflow.com/questions/3518504/regular-expression-for-matching-latitude-longitude-coordinates
 

@@ -8,14 +8,13 @@ import { createCertain, configCalcCharts } from '../chart/configChart';
 import { resetCalcChart } from '../chart/manageChart';
 
 import fetchVirusSpread from '../api/fetchVirusSpread';
+import { DAY } from '../util/date';
 
 import Loader from './Loader';
 
 import './Chart.css';
 
 //am4core.useTheme(theme);
-
-const DAY = 24 * 3600000;
 
 // https://www.medrxiv.org/content/10.1101/2020.03.16.20037168v1.full.pdf
 

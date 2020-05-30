@@ -15,9 +15,9 @@ import Loader from './Loader';
 
 import './Chart.css';
 
-//am4core.useTheme(theme);
+import { TWO_HOURS, THREE_HOURS, SUMMER_TIME_START } from '../util/date';
 
-const THREE_HOURS = 3 * 3600000;
+//am4core.useTheme(theme);
 
 let chart = null;
 let certain = null;
@@ -107,7 +107,11 @@ const DataChart = ({ location, dateRange, onDataLoaded }) => {
                     visibility: parseFloat(hour.visibility)
                 };
                 data.push(item);
-                millis += THREE_HOURS;
+                if (millis === SUMMER_TIME_START) {
+                    millis += TWO_HOURS;
+                } else {
+                    millis += THREE_HOURS;
+                }
             });
         });
 
