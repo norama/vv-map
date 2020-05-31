@@ -406,9 +406,9 @@ export const configDataChart = (chart) => {
 function configCalcAxis(calcAxis) {
     calcAxis.title.fontWeight = 700;
     calcAxis.title.fontFamily = FONT;
-    //calcAxis.min = -10;
+    calcAxis.min = -10;
     //calcAxis.max = 110;
-    calcAxis.strictMinMax = false;
+    calcAxis.strictMinMax = true;
     calcAxis.renderer.minGridDistance = 30;
 }
 
@@ -484,7 +484,6 @@ const addVirusAxes = (chart) => {
     let virAllAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configCalcAxis(virAllAxis);
     virAllAxis.title.text = "Virus All";
-    virAllAxis.strictMinMax = true;
     virAllAxis.marginTop = 0;
     virAllAxis.marginBottom = 0;
     //virAllAxis.renderer.opposite = true;
@@ -496,7 +495,6 @@ const addVirusAxes = (chart) => {
     let virNewAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configCalcAxis(virNewAxis);
     virNewAxis.title.text = "Virus New";
-    virNewAxis.strictMinMax = true;
     virNewAxis.marginTop = 0;
     virNewAxis.marginBottom = 0;
     //virNewAxis.renderer.opposite = true;

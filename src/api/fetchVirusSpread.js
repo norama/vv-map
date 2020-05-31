@@ -87,7 +87,7 @@ function fetchProvinces(iso3) {
 const virusSpreadForCountry = (country, dateRange) => {
     const startMillis = dateMillis(dateRange.startDate);
     const endMillis = dateMillis(dateRange.endDate);
-    return Object.keys(country.timelineMap).reduce((acc, millis) => {
+    const timelineMap =  Object.keys(country.timelineMap).reduce((acc, millis) => {
         if (startMillis <= millis && millis <= endMillis) {
             const item = country.timelineMap[millis];
             acc[millis] = {
@@ -97,20 +97,27 @@ const virusSpreadForCountry = (country, dateRange) => {
         }
         return acc;
     }, {});
+    console.log('VIRUS SPREAD FOR COUNTRY: ' + country.name, timelineMap);
+
+    return timelineMap;
 };
 
-function fetchVirusSpreadForProvince(province, dateRange) {
+function fetchVirusSpreadForProvince(province, dateRange, city) {
     const dates = datesInRange(dateRange);
 
     const getVirusSpreadPromise = (index) => {
         const date = dates[index];
 
+        const provinceQueryParam = (province.iso3 === 'USA') ? 'q' : 'region_province';
+
         return fetch(process.env.REACT_APP_VIRUS_BY_PROVINCE_BY_DATE + `?` +
                 `date=${dateString(date)}` + `&` +
                 `iso=${province.iso3}` + `&` +
-                `region_province=${province.name}`)
+                `${provinceQueryParam}=${province.name}` +
+                (city ? `&city_name=${city.name}` : ``))
             .then((response) => (response.json()))
             .then((response) => (response.data[0]))
+            .then((data) => (city ? data.region.cities[0] : data))
             .then((data) => ({
                 millis: date,
                 confirmed: data ? data.confirmed : null,
@@ -120,6 +127,9 @@ function fetchVirusSpreadForProvince(province, dateRange) {
 
     return chain(getVirusSpreadPromise, dates.length, 5)
         .then((data) => {
+            if (data.filter((item) => (item.confirmed === null)).length > process.env.REACT_APP_MAX_VIRUS_DATA_ERROR_COUNT) {
+                return null;
+            }
             for (let i = 0; i < data.length; ++i) {
                 if (data[i].confirmed === null) {
                     data[i].confirmed = (i > 0) ?
@@ -129,17 +139,55 @@ function fetchVirusSpreadForProvince(province, dateRange) {
             return data;
         })
         .then((data) => (
-            data.reduce((acc, item) => {
+            data ? data.reduce((acc, item) => {
                 acc[item.millis] = {
                     confirmed: item.confirmed,
                     new_confirmed: item.new_confirmed
                 };
                 return acc;
-            }, {})
+            }, {}) : null
         ));
 }
 
+function fetchCity(location, province, dateRange) {
+    return fetch(process.env.REACT_APP_VIRUS_BY_PROVINCE_BY_DATE + `?` +
+                `date=${dateRange.startDate}` + `&` +
+                `iso=${province.iso3}` + `&` +
+                `q=${province.name}`)
+            .then((response) => (response.json()))
+            .then((response) => (response.data))
+            .then((data) => {
+                console.log('fetchCity data', data);
+                const cities = data.reduce((acc, region) => {
+                    const regionCities = region.region.cities.map((city) => ({
+                        name: city.name,
+                        lat: city.lat,
+                        lng: city.long
+                    }));
+                    return [...acc, ...regionCities];
+                }, []);
+
+                return nearestProvince(location, cities);
+            });
+}
+
 function fetchVirusSpread(location, dateRange) {
+
+    const result = (timelineMap, country, province, city) => ({
+        country: country.name,
+        population: (!timelineMap ? country.population : null),
+        province: (timelineMap && province ? province.name : null),
+        city: (timelineMap && city ? city.name : null),
+        timelineMap: (timelineMap ? timelineMap : virusSpreadForCountry(country, dateRange))
+    });
+
+    const fetchVirusSpreadResult = (country, province, dateRange, city) => (
+        fetchVirusSpreadForProvince(province, dateRange, city).then((timelineMap) => {
+            return timelineMap || !city ? 
+                result(timelineMap, country, province, city) :
+                fetchVirusSpreadResult(country, province, dateRange) // only province without city
+        })
+    );
 
     return getFetched(process.env.REACT_APP_VIRUS_MAIN_URL, 'virusSpreadCountriesTimeline', transformVirusSpreadCountriesTimeline)
         .then((countries) => {
@@ -162,20 +210,15 @@ function fetchVirusSpread(location, dateRange) {
                     return fetchProvinces(country.iso3).then((provinces) => {
                         console.log('provinces', provinces);
                         if (provinces.length <= 1) {
-                            return {
-                                country: country.name,
-                                population: country.population,
-                                timelineMap: virusSpreadForCountry(country, dateRange)
-                            };
+                            return result(null, country);
                         } else {
                             const province = nearestProvince(location, provinces);
-                            return fetchVirusSpreadForProvince(province, dateRange).then((timelineMap) => {
-                                return {
-                                    country: country.name,
-                                    province: province.name,
-                                    timelineMap
-                                };
-                            });
+                            return (country.iso3 === 'USA') ?
+                                fetchCity(location, province, dateRange).then((city) => (
+                                    fetchVirusSpreadResult(country, province, dateRange, city)
+                                ))
+                            :
+                                fetchVirusSpreadResult(country, province, dateRange);
                         }
                     });
                 });

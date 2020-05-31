@@ -132,7 +132,7 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
         charts.virus.certain.show();
         charts.estimate.certain.show();
 
-        fetchVirusDataWithEstimates().then(({ data, country, province, population }) => {
+        fetchVirusDataWithEstimates().then(({ data, country, province, city, population }) => {
             if (charts === START_CHARTS) {
                 return;
             }
@@ -143,7 +143,7 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
 
             charts.virus.chart.data = data;
             charts.estimate.chart.data = data;
-            setLocationVirusInfo({ location: country + (province ? ' - ' + province : ''), population });
+            setLocationVirusInfo({ location: country + (province ? ' - ' + province : '') + (city ? ': ' + city : ''), population });
         }).catch((error) => {
             if (charts === START_CHARTS) {
                 return;
@@ -214,6 +214,7 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
             return {
                 country: locationData.country,
                 province: locationData.province,
+                city: locationData.city,
                 population: locationData.population,
                 data
             };
