@@ -406,9 +406,6 @@ export const configDataChart = (chart) => {
 function configCalcAxis(calcAxis) {
     calcAxis.title.fontWeight = 700;
     calcAxis.title.fontFamily = FONT;
-    calcAxis.min = -10;
-    //calcAxis.max = 110;
-    calcAxis.strictMinMax = true;
     calcAxis.renderer.minGridDistance = 30;
 }
 
@@ -416,11 +413,13 @@ function configCalcRefAxis(calcAxis) {
     configCalcAxis(calcAxis);
     calcAxis.title.text = "Calc (ref below)";
     calcAxis.marginTop = 0;
-    calcAxis.strictMinMax = true;
+    calcAxis.strictMinMax = false;
     calcAxis.marginBottom = 0;
+    calcAxis.renderer.grid.template.disabled = true;
     calcAxis.renderer.line.stroke = am4core.color("#edac15");
-    calcAxis.renderer.labels.template.fill = am4core.color("#edac15");
-    calcAxis.title.fill = am4core.color("#e84900");
+    calcAxis.renderer.labels.template.disabled = true;
+    calcAxis.title.fill = am4core.color("#edac15");
+    calcAxis.title.disabled = true;
     calcAxis.renderer.opposite = true;
 }
 
@@ -490,7 +489,11 @@ const addVirusAxes = (chart) => {
     virAllAxis.renderer.line.stroke = am4core.color("#521d75");
     virAllAxis.renderer.labels.template.fill = am4core.color("#521d75");
     virAllAxis.title.fill = am4core.color("#521d75");
+    virAllAxis.renderer.grid.template.disabled = true;
     virAllAxis.renderer.opposite = true;
+    //virAllAxis.min = -10;
+    virAllAxis.strictMinMax = true;
+    virAllAxis.logarithmic = true;
 
     let virNewAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configCalcAxis(virNewAxis);
@@ -501,9 +504,17 @@ const addVirusAxes = (chart) => {
     virNewAxis.renderer.line.stroke = am4core.color("#2e3033");
     virNewAxis.renderer.labels.template.fill = am4core.color("#2e3033");
     virNewAxis.title.fill = am4core.color("#2e3033");
+    //virNewAxis.min = -10;
+    //virNewAxis.strictMinMax = true;
 
     return { virAllAxis, virNewAxis, calcAxis };
 };
+
+function createGrid(valueAxis, value) {
+    var range = valueAxis.axisRanges.create();
+    range.value = value;
+    range.label.text = "{value}";
+}
 
 const addEstimateAxes = (chart) => {
 
@@ -519,16 +530,32 @@ const addEstimateAxes = (chart) => {
     percentAxis.renderer.labels.template.fill = am4core.color("#0384fc");
     percentAxis.title.fill = am4core.color("#0384fc");
     percentAxis.renderer.opposite = true;
+    percentAxis.renderer.grid.template.disabled = true;
+    //percentAxis.renderer.labels.template.disabled = true;
+    //percentAxis.renderer.grid.template.strokeWidth = 2;
+    createGrid(percentAxis, 50);
+    createGrid(percentAxis, 100);
 
     let temperatureAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configTemperatureAxis(temperatureAxis);
     temperatureAxis.title.text = "Dewp - temp (" + DEGREE + "C)";
-    temperatureAxis.strictMinMax = true;
+    //temperatureAxis.strictMinMax = true;
     temperatureAxis.marginTop = 0;
     temperatureAxis.marginBottom = 0;
     temperatureAxis.renderer.line.stroke = am4core.color("#1dad91");
     temperatureAxis.renderer.labels.template.fill = am4core.color("#1dad91");
     temperatureAxis.title.fill = am4core.color("#1dad91");
+    temperatureAxis.renderer.grid.template.disabled = true;
+    //temperatureAxis.renderer.labels.template.disabled = true;
+    createGrid(temperatureAxis, 0);
+    //temperatureAxis.renderer.grid.template.stroke = am4core.color("#1dad91");
+    temperatureAxis.renderer.baseGrid.stroke = am4core.color("red");
+    temperatureAxis.renderer.baseGrid.strokeWidth = 2;
+    temperatureAxis.max = 5;
+
+    //percentAxis.syncWithAxis = temperatureAxis;
+    //percentAxis.showOnInit = true;
+    //temperatureAxis.showOnInit = true;
 
     return { percentAxis, temperatureAxis, calcAxis };
 };
@@ -575,6 +602,7 @@ const configVirusChart = (chart) => {
 
     let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
     dateAxis.renderer.opposite = true;
+    dateAxis.renderer.labels.template.disabled = true;
 
     const { virAllAxis, virNewAxis, calcAxis } = addVirusAxes(chart);
 
@@ -627,7 +655,7 @@ const configVirusChart = (chart) => {
 
     let scrollbarX = new am4charts.XYChartScrollbar();
     scrollbarX.minHeight = 10;
-    //scrollbarX.series.push(mseries);
+    scrollbarX.series.push(mseries);
     chart.scrollbarX = scrollbarX;
     chart.scrollbarX.background.fill = am4core.color("#2e3033");
     chart.scrollbarX.background.fillOpacity = 0.2;
@@ -635,7 +663,7 @@ const configVirusChart = (chart) => {
     chart.scrollbarX.thumb.background.fillOpacity = 0.2;
     chart.scrollbarX.parent = chart.topAxesContainer;
 
-    chart.rightAxesContainer.width = 150;
+    chart.rightAxesContainer.width = 100;
     chart.leftAxesContainer.width = 100;
 };
 
@@ -653,6 +681,7 @@ const configEstimateChart = (chart) => {
     ];
 
     let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+    dateAxis.renderer.labels.template.disabled = true;
 
     const { percentAxis, temperatureAxis, calcAxis } = addEstimateAxes(chart);
 
@@ -670,7 +699,7 @@ const configEstimateChart = (chart) => {
     series = chart.series.push(new am4charts.LineSeries());
     configCloudCoverSeries(series);
     series.yAxis = percentAxis;
-    percentAxis.title.fill = series.stroke;
+    series.hidden = true;
 
     // Calc with visibility
     series = chart.series.push(new am4charts.LineSeries());
@@ -703,7 +732,7 @@ const configEstimateChart = (chart) => {
 
     let scrollbarX = new am4charts.XYChartScrollbar();
     scrollbarX.minHeight = 10;
-    //scrollbarX.series.push(mseries);
+    scrollbarX.series.push(mseries);
     chart.scrollbarX = scrollbarX;
     chart.scrollbarX.background.fill = am4core.color("#cc6e21");
     chart.scrollbarX.background.fillOpacity = 0.2;
@@ -711,7 +740,7 @@ const configEstimateChart = (chart) => {
     chart.scrollbarX.thumb.background.fillOpacity = 0.2;
     chart.scrollbarX.parent = chart.bottomAxesContainer;
 
-    chart.rightAxesContainer.width = 150;
+    chart.rightAxesContainer.width = 100;
     chart.leftAxesContainer.width = 100;
 };
 

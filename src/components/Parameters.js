@@ -81,7 +81,7 @@ const Parameters = ({ location, dateRange, name }) => {
                         popoverOpen={state.popoverOpen}
                         onTogglePopover={handleTogglePopover}
                     />
-                    <Button color="primary" className="button" onClick={handleWeather}>Show Weather</Button>
+                    <Button color="primary" className="button" onClick={handleWeather}>Charts</Button>
                 </div>
                 <Location latlng={newLocation.latlng} query={newLocation.name} onChange={setNewLocation} />
             </div>

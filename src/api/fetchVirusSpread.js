@@ -235,6 +235,7 @@ function fetchVirusSpread(location, dateRange) {
                             return getResult(null, country);
                         } else {
                             let province = nearestProvince(location, provinces);
+                            console.log('province', province);
                             return (country.iso3 === 'USA') ?
                                 fetchCity(location, province, dateRange).then((city) => (
                                     fetchVirusSpreadResult(country, province, dateRange, city).then((result) => {
@@ -261,6 +262,7 @@ function fetchVirusSpread(location, dateRange) {
                                     } else {
                                         // second trial with second nearest province
                                         province = nearestProvince(location, provinces.filter((p) => (p !== province)));
+                                        console.log('second province', province);
                                         return fetchVirusSpreadResult(country, province, dateRange, null, true);
                                     }
                                 });
