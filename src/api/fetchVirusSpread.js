@@ -2,6 +2,7 @@ import { ISO_2_TO_3 } from '../util/countries';
 import { distance } from '../util/geo';
 import { datesInRange, dateString, dateMillis } from '../util/date';
 import { chain } from '../util/promise';
+import { provinceNames } from '../util/usa';
 
 let cache = {
     virusSpreadCountriesTimeline: null
@@ -64,6 +65,15 @@ function nearestProvince(location, provinces) {
     return res;
 }
 
+function largerProvince(province, provinces) {
+    if (province.iso3 !== 'USA' || province.name.length < 2) {
+        return null;
+    }
+    const code = province.name.substring(province.name.length - 2);
+    const name = provinceNames[code];
+    return provinces.find((p) => (p.name === name));
+}
+
 function fetchCountryCode(location) {
     return fetch(`${process.env.REACT_APP_GEONAMES_COUNTRY_URL}?username=${process.env.REACT_APP_GEONAMES_USERNAME}` +
                  `&lat=${location.lat}&lng=${location.lng}`)
@@ -122,12 +132,22 @@ function fetchVirusSpreadForProvince(province, dateRange, city) {
                 millis: date,
                 confirmed: data ? data.confirmed : null,
                 new_confirmed: data ? data.confirmed_diff : 0
-            }));
+            }))
+            .catch((error) => {
+                console.error(error);
+                return {
+                    millis: date,
+                    confirmed: null,
+                    new_confirmed: 0
+                };
+            });
     };
 
     return chain(getVirusSpreadPromise, dates.length, 5)
         .then((data) => {
-            if (data.filter((item) => (item.confirmed === null)).length > process.env.REACT_APP_MAX_VIRUS_DATA_ERROR_COUNT) {
+            const errorCount = data.filter((item) => (item.confirmed === null)).length;
+            if (errorCount / data.length > process.env.REACT_APP_MAX_VIRUS_DATA_ERROR_PERCENT / 100) {
+                console.log('max error percent exceeded', 100 * errorCount / data.length);
                 return null;
             }
             for (let i = 0; i < data.length; ++i) {
@@ -173,7 +193,7 @@ function fetchCity(location, province, dateRange) {
 
 function fetchVirusSpread(location, dateRange) {
 
-    const result = (timelineMap, country, province, city) => ({
+    const getResult = (timelineMap, country, province, city) => ({
         country: country.name,
         population: (!timelineMap ? country.population : null),
         province: (timelineMap && province ? province.name : null),
@@ -181,11 +201,13 @@ function fetchVirusSpread(location, dateRange) {
         timelineMap: (timelineMap ? timelineMap : virusSpreadForCountry(country, dateRange))
     });
 
-    const fetchVirusSpreadResult = (country, province, dateRange, city) => (
+    const fetchVirusSpreadResult = (country, province, dateRange, city, countryDefault) => (
         fetchVirusSpreadForProvince(province, dateRange, city).then((timelineMap) => {
             return timelineMap || !city ? 
-                result(timelineMap, country, province, city) :
-                fetchVirusSpreadResult(country, province, dateRange) // only province without city
+                (timelineMap || countryDefault ?
+                    getResult(timelineMap, country, province, city) :
+                    null) :
+                fetchVirusSpreadResult(country, province, dateRange, null, countryDefault) // only province without city
         })
     );
 
@@ -210,15 +232,38 @@ function fetchVirusSpread(location, dateRange) {
                     return fetchProvinces(country.iso3).then((provinces) => {
                         console.log('provinces', provinces);
                         if (provinces.length <= 1) {
-                            return result(null, country);
+                            return getResult(null, country);
                         } else {
-                            const province = nearestProvince(location, provinces);
+                            let province = nearestProvince(location, provinces);
                             return (country.iso3 === 'USA') ?
                                 fetchCity(location, province, dateRange).then((city) => (
-                                    fetchVirusSpreadResult(country, province, dateRange, city)
+                                    fetchVirusSpreadResult(country, province, dateRange, city).then((result) => {
+                                        if (result) {
+                                            return result;
+                                        } else {
+                                            // second trial with larger province
+                                            province = largerProvince(province, provinces);
+                                            console.log('larger province', province);
+                                            if (province) {
+                                                return fetchCity(location, province, dateRange).then((city) => (
+                                                    fetchVirusSpreadResult(country, province, dateRange, city, true)
+                                                ));
+                                            } else {
+                                                return getResult(null, country);
+                                            }
+                                        }
+                                    })
                                 ))
                             :
-                                fetchVirusSpreadResult(country, province, dateRange);
+                                fetchVirusSpreadResult(country, province, dateRange).then((result) => {
+                                    if (result) {
+                                        return result;
+                                    } else {
+                                        // second trial with second nearest province
+                                        province = nearestProvince(location, provinces.filter((p) => (p !== province)));
+                                        return fetchVirusSpreadResult(country, province, dateRange, null, true);
+                                    }
+                                });
                         }
                     });
                 });
