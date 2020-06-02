@@ -22,12 +22,12 @@ const DateRange = ({ startDate, endDate, onChange, popoverOpen, onTogglePopover 
         <div className="__DateRange__">
             <div className="daterange">
                 <h5 className="title">Date range:</h5>
-                <div className="range" id="popover">
+                <div className="range" id="daterange">
                     <h5 className="text">{format(startDate, DATE_FORMAT)} - {format(endDate, DATE_FORMAT)}</h5>
                     <Button outline={!popoverOpen} color="secondary" className="change">{popoverOpen ? "Done" : "Change"}</Button>
                 </div>
             </div>
-            <Popover placement="bottom" isOpen={popoverOpen} target="popover" toggle={onTogglePopover}>
+            <Popover placement="bottom" isOpen={popoverOpen} target="daterange" toggle={onTogglePopover}>
                 <PopoverBody onClick={preventEventPropagation}>
                     <DateRangePicker
                         showSelectionPreview={true}

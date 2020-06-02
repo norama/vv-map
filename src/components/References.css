@@ -1,0 +1,14 @@
+
+.__References__ .references {
+    position: fixed;
+    bottom: 15px;
+    right: 20px;
+}
+
+.references-popup {
+    background-color: lightgrey;
+}
+
+.references-popup h3 {
+    font-size: 16px;
+}
