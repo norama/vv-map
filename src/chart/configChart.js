@@ -505,7 +505,7 @@ const addVirusAxes = (chart) => {
     virNewAxis.renderer.labels.template.fill = am4core.color("#2e3033");
     virNewAxis.title.fill = am4core.color("#2e3033");
     //virNewAxis.min = -10;
-    //virNewAxis.strictMinMax = true;
+    virNewAxis.strictMinMax = true;
 
     return { virAllAxis, virNewAxis, calcAxis };
 };
