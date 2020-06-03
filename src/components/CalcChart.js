@@ -10,8 +10,9 @@ import { resetCalcChart } from '../chart/manageChart';
 import fetchVirusSpread from '../api/fetchVirusSpread';
 import { DAY } from '../util/date';
 
-import LocationVirusInfo from './LocationVirusInfo';
-import References from './References';
+import LocationVirusInfo from './info/LocationVirusInfo';
+import CountryVirusInfo from './info/CountryVirusInfo';
+import References from './info/References';
 
 import Loader from './Loader';
 
@@ -273,6 +274,9 @@ const CalcChart = ({ weatherData, location, dateRange, reset }) => {
             </div>
             {locationVirusInfo ? (
                 <LocationVirusInfo {...locationVirusInfo} />
+            ) : null}
+            {locationVirusInfo ? (
+                <CountryVirusInfo country={locationVirusInfo.country} />
             ) : null}
             <References close={clicks} />
         </div>

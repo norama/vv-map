@@ -1,0 +1,6 @@
+.__CountryVirusInfo__ {
+    position: fixed;
+    bottom: 21px;
+    left: 50vw;
+    display: flex;
+}
