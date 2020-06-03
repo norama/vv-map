@@ -101,10 +101,14 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-const CalcChart = ({ weatherData, location, dateRange }) => {
+const CalcChart = ({ weatherData, location, dateRange, reset }) => {
     const [ clicks, setClicks ] = useState(0);
 
     const [ locationVirusInfo, setLocationVirusInfo ] = useState(null);
+
+    useEffect(() => {
+        incClicks();
+    }, [ reset ]);
 
     useEffect(() => {
 
@@ -206,7 +210,7 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
                         item.new_confirmed = (item.date - lastDayItem.date < DAY) ?
                             lastDayItem.new_confirmed : 0;
                     } else {
-                        item.confirmed = 0;
+                        item.confirmed = null;
                         item.new_confirmed = 0;
                     }
                 }

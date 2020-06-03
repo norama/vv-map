@@ -491,7 +491,6 @@ const addVirusAxes = (chart) => {
     virAllAxis.title.fill = am4core.color("#521d75");
     virAllAxis.renderer.grid.template.disabled = true;
     virAllAxis.renderer.opposite = true;
-    //virAllAxis.min = -10;
     virAllAxis.strictMinMax = true;
     virAllAxis.logarithmic = true;
 
@@ -694,6 +693,7 @@ const configEstimateChart = (chart) => {
     let series = chart.series.push(new am4charts.LineSeries());
     configHumiditySeries(series);
     series.yAxis = percentAxis;
+    series.hidden = true;
 
     // Cloud cover
     series = chart.series.push(new am4charts.LineSeries());

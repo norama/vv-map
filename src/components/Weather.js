@@ -82,7 +82,7 @@ const Weather = ({ location, dateRange, name }) => {
                         <DataChart location={location} dateRange={dateRange} onDataLoaded={setData} />
                     </TabPane>
                     <TabPane tabId="2">
-                        <CalcChart weatherData={activateCalc ? data : null} location={location} dateRange={dateRange} />
+                        <CalcChart weatherData={activateCalc ? data : null} location={location} dateRange={dateRange} reset={parameters} />
                     </TabPane>
                 </TabContent>
                 {activeTab === '1' ? (

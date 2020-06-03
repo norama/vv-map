@@ -107,7 +107,7 @@ const virusSpreadForCountry = (country, dateRange) => {
         }
         return acc;
     }, {});
-    console.log('VIRUS SPREAD FOR COUNTRY: ' + country.name, timelineMap);
+    //console.log('VIRUS SPREAD FOR COUNTRY: ' + country.name, timelineMap);
 
     return timelineMap;
 };
@@ -130,7 +130,7 @@ function fetchVirusSpreadForProvince(province, dateRange, city) {
             .then((data) => (city ? data.region.cities[0] : data))
             .then((data) => ({
                 millis: date,
-                confirmed: data && data.confirmed ? data.confirmed : null,
+                confirmed: data && data.confirmed ? Math.max(data.confirmed, 1) : null,
                 new_confirmed: data ? data.confirmed_diff : 0
             }))
             .catch((error) => {
@@ -147,7 +147,10 @@ function fetchVirusSpreadForProvince(province, dateRange, city) {
         .then((data) => {
             const errorCount = data.filter((item) => (item.confirmed === null)).length;
             if (errorCount / data.length > process.env.REACT_APP_MAX_VIRUS_DATA_ERROR_PERCENT / 100) {
-                console.log('max error percent exceeded', 100 * errorCount / data.length);
+                console.log('-> Province: ' + province.name +
+                    (city ? ', City: ' + city.name : '') +
+                    ': MAX ERROR PERCENT EXCEEDED',
+                    100 * errorCount / data.length);
                 return null;
             }
             for (let i = 1; i < data.length; ++i) {
@@ -176,7 +179,7 @@ function fetchCity(location, province, dateRange) {
             .then((response) => (response.json()))
             .then((response) => (response.data))
             .then((data) => {
-                console.log('fetchCity data', data);
+                //console.log('fetchCity data', data);
                 const cities = data.reduce((acc, region) => {
                     const regionCities = region.region.cities.map((city) => ({
                         name: city.name,
@@ -221,20 +224,21 @@ function fetchVirusSpread(location, dateRange) {
                     return country;
                 })
                 .catch((error) => {
+                    console.error(error);
                     console.log('country code error, taking closest country', error);
                     return nearestCountry(location, countries);
                 })
                 .then((country) => {
 
-                    console.log('country data', country);
+                    //console.log('country data', country);
 
                     return fetchProvinces(country.iso3).then((provinces) => {
-                        console.log('provinces', provinces);
+                        //console.log('provinces', provinces);
                         if (provinces.length <= 1) {
                             return getResult(null, country);
                         } else {
                             let province = nearestProvince(location, provinces);
-                            console.log('province', province);
+                            //console.log('province', province);
                             return (country.iso3 === 'USA') ?
                                 fetchCity(location, province, dateRange).then((city) => (
                                     fetchVirusSpreadResult(country, province, dateRange, city).then((result) => {
@@ -243,7 +247,7 @@ function fetchVirusSpread(location, dateRange) {
                                         } else {
                                             // second trial with larger province
                                             province = largerProvince(province, provinces);
-                                            console.log('larger province', province);
+                                            //console.log('larger province', province);
                                             if (province) {
                                                 return fetchCity(location, province, dateRange).then((city) => (
                                                     fetchVirusSpreadResult(country, province, dateRange, city, true)
@@ -261,7 +265,7 @@ function fetchVirusSpread(location, dateRange) {
                                     } else {
                                         // second trial with second nearest province
                                         province = nearestProvince(location, provinces.filter((p) => (p !== province)));
-                                        console.log('second province', province);
+                                        //console.log('second province', province);
                                         return fetchVirusSpreadResult(country, province, dateRange, null, true);
                                     }
                                 });
