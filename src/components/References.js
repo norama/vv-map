@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Button, Popover, PopoverBody, Card, CardBody } from 'reactstrap';
 
@@ -8,9 +8,13 @@ function preventEventPropagation(e) {
     e.stopPropagation();
 }
 
-const References = () => {
+const References = ({ close }) => {
 
     const [ popoverOpen, setPopoverOpen ] = useState(false);
+
+    useEffect(() => {
+        setPopoverOpen(false);
+    }, [ close ]);
 
     const handleTogglePopover = () => {
         setPopoverOpen((open) => (!open));

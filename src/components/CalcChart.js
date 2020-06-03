@@ -102,6 +102,7 @@ function getRandomInt(max) {
 
 const CalcChart = ({ weatherData, location, dateRange }) => {
     const [ loading, setLoading ] = useState(false);
+    const [ clicks, setClicks ] = useState(0);
 
     const [ locationVirusInfo, setLocationVirusInfo ] = useState({ location: null, population: null });
 
@@ -251,8 +252,12 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
         return data;
     };
 
+    const incClicks = () => {
+        setClicks((c) => (c + 1));
+    };
+
     return (
-        <div className="__Chart__">
+        <div className="__Chart__" onClick={incClicks}>
             <div className="chart">
                 <div className="calc-top-chart">
                     <Loader loading={loading} />
@@ -265,7 +270,7 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
                 </div>
             </div>
             <div className="location-virus-info">{loading ? null : locationVirusInfo.location}</div>
-            <References />
+            <References close={clicks} />
         </div>
     );
 };
