@@ -37,7 +37,6 @@ const START_CHARTS = {
 let charts = START_CHARTS;
 
 function initCharts() {
-    console.log('---> CREATING CHART');
     charts = {...START_CHARTS};
     charts.virus.chart = am4core.create("virusChart", am4charts.XYChart);
     charts.virus.certain = createCertain(charts.virus.chart);
