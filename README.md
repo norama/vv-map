@@ -1,4 +1,4 @@
-# Historical weather chart
+# The impact of weather conditions on new coronavirus spreading
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
