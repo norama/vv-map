@@ -130,7 +130,7 @@ function fetchVirusSpreadForProvince(province, dateRange, city) {
             .then((data) => (city ? data.region.cities[0] : data))
             .then((data) => ({
                 millis: date,
-                confirmed: data ? data.confirmed : null,
+                confirmed: data && data.confirmed ? data.confirmed : null,
                 new_confirmed: data ? data.confirmed_diff : 0
             }))
             .catch((error) => {
@@ -150,10 +150,9 @@ function fetchVirusSpreadForProvince(province, dateRange, city) {
                 console.log('max error percent exceeded', 100 * errorCount / data.length);
                 return null;
             }
-            for (let i = 0; i < data.length; ++i) {
+            for (let i = 1; i < data.length; ++i) {
                 if (data[i].confirmed === null) {
-                    data[i].confirmed = (i > 0) ?
-                        data[i - 1].confirmed : 0;
+                    data[i].confirmed = data[i - 1].confirmed;
                 }
             }
             return data;
