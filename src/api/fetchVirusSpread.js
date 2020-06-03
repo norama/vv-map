@@ -237,7 +237,7 @@ function fetchVirusSpread(location, dateRange) {
 
                         // hack for London -> Channel Islands
                         if (country.iso3 === 'GBR') {
-                            provinces = provinces.filter((p) => (p.name !== "Channel Islands"));
+                            provinces = provinces.filter((p) => (p.name !== "Channel Islands" && p.name !== "Isle of Man"));
                         }
 
                         if (provinces.length <= 1) {
