@@ -1,0 +1,29 @@
+.__LocationVirusInfo__ {
+    position: fixed;
+    bottom: 10px;
+    left: 20px;
+    display: flex;
+}
+
+.__LocationVirusInfo__ h3 .badge {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.__LocationVirusInfo__ .label {
+    margin-top: 8px;
+    margin-right: 10px;
+}
+
+.__LocationVirusInfo__ .data {
+    margin-right: 10px;
+}
+
+.__LocationVirusInfo__ .country {
+    font-weight: 600;
+}
+
+.__LocationVirusInfo__ .population {
+    margin-top: 8px;
+    color: blue;
+}

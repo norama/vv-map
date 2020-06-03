@@ -44,9 +44,3 @@
     width: 100%;
     height: 50px;
 }
-
-.__Chart__ .location-virus-info {
-    position: fixed;
-    bottom: 10px;
-    left: 20px;
-}

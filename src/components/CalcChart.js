@@ -10,6 +10,7 @@ import { resetCalcChart } from '../chart/manageChart';
 import fetchVirusSpread from '../api/fetchVirusSpread';
 import { DAY } from '../util/date';
 
+import LocationVirusInfo from './LocationVirusInfo';
 import References from './References';
 
 import Loader from './Loader';
@@ -101,10 +102,9 @@ function getRandomInt(max) {
 }
 
 const CalcChart = ({ weatherData, location, dateRange }) => {
-    const [ loading, setLoading ] = useState(false);
     const [ clicks, setClicks ] = useState(0);
 
-    const [ locationVirusInfo, setLocationVirusInfo ] = useState({ location: null, population: null });
+    const [ locationVirusInfo, setLocationVirusInfo ] = useState(null);
 
     useEffect(() => {
 
@@ -115,7 +115,6 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
                 return;
             }
 
-            setLoading(false);
             charts.virus.certain.hide();
             charts.estimate.certain.hide();
         });
@@ -123,7 +122,7 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
 
     useEffect(() => {
         if (!weatherData) {
-            setLoading(true);
+            setLocationVirusInfo(null);
             charts.virus.certain.show();
             charts.estimate.certain.show();
             return;
@@ -131,7 +130,7 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
 
         // console.log('location: [' + location.lat + ', ' + location.lng + '], dateRange: ' + dateRange.startDate + ' - ' + dateRange.endDate);
 
-        setLoading(true);
+        setLocationVirusInfo(null);
         charts.virus.certain.show();
         charts.estimate.certain.show();
 
@@ -146,7 +145,7 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
 
             charts.virus.chart.data = data;
             charts.estimate.chart.data = data;
-            setLocationVirusInfo({ location: country + (province ? ' - ' + province : '') + (city ? ': ' + city : ''), population });
+            setLocationVirusInfo({ country, province, city, population });
         }).catch((error) => {
             if (charts === START_CHARTS) {
                 return;
@@ -258,9 +257,9 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
 
     return (
         <div className="__Chart__" onClick={incClicks}>
+            <Loader loading={!locationVirusInfo} />
             <div className="chart">
                 <div className="calc-top-chart">
-                    <Loader loading={loading} />
                     <div id="topLegend" className="top-legend"></div>
                     <div id="virusChart" className="top-chart"></div>
                 </div>
@@ -269,7 +268,9 @@ const CalcChart = ({ weatherData, location, dateRange }) => {
                     <div id="bottomLegend" className="bottom-legend"></div>
                 </div>
             </div>
-            <div className="location-virus-info">{loading ? null : locationVirusInfo.location}</div>
+            {locationVirusInfo ? (
+                <LocationVirusInfo {...locationVirusInfo} />
+            ) : null}
             <References close={clicks} />
         </div>
     );
