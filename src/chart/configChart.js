@@ -309,6 +309,8 @@ export const configDataChart = (chart) => {
     speedAxis.marginTop = 10;
     speedAxis.marginBottom = 10;
     speedAxis.renderer.opposite = true;
+    speedAxis.renderer.grid.template.disabled = true;
+
 /*
     let pictogramAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
     configPictogramAxis(pictogramAxis2);
@@ -415,8 +417,8 @@ function configCalcRefAxis(calcAxis) {
     calcAxis.marginTop = 0;
     calcAxis.strictMinMax = false;
     calcAxis.marginBottom = 0;
-    calcAxis.renderer.grid.template.disabled = true;
     calcAxis.renderer.line.stroke = am4core.color("#edac15");
+    calcAxis.renderer.grid.template.disabled = true;
     calcAxis.renderer.labels.template.disabled = true;
     calcAxis.title.fill = am4core.color("#edac15");
     calcAxis.title.disabled = true;
@@ -531,7 +533,8 @@ const addEstimateAxes = (chart) => {
     percentAxis.renderer.opposite = true;
     percentAxis.renderer.grid.template.disabled = true;
     //percentAxis.renderer.labels.template.disabled = true;
-    //percentAxis.renderer.grid.template.strokeWidth = 2;
+    percentAxis.renderer.grid.template.stroke = am4core.color("blue");
+    percentAxis.renderer.grid.template.strokeWidth = 1;
     createGrid(percentAxis, 50);
     createGrid(percentAxis, 100);
 
@@ -547,7 +550,9 @@ const addEstimateAxes = (chart) => {
     temperatureAxis.renderer.grid.template.disabled = true;
     //temperatureAxis.renderer.labels.template.disabled = true;
     createGrid(temperatureAxis, 0);
-    //temperatureAxis.renderer.grid.template.stroke = am4core.color("#1dad91");
+    createGrid(temperatureAxis, -1);
+    temperatureAxis.renderer.grid.template.stroke = am4core.color("red");
+    temperatureAxis.renderer.grid.template.strokeWidth = 1;
     temperatureAxis.renderer.baseGrid.stroke = am4core.color("red");
     temperatureAxis.renderer.baseGrid.strokeWidth = 2;
     temperatureAxis.max = 5;
