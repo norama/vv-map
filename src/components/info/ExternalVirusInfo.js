@@ -4,7 +4,8 @@ import './ExternalVirusInfo.css';
 
 const MAP = {
     Czechia: 'czech-republic',
-    'S. Korea': 'south-korea'
+    'S. Korea': 'south-korea',
+    USA: 'US'
 };
 
 function countryMap(country) {
@@ -18,7 +19,7 @@ const ExternalVirusInfo = ({ country, province }) => (
             process.env.REACT_APP_VIRUS_COUNTRY_REFERENCE_BASE_URL+'/'+countryMap(country)}
             target="_blank" rel="noopener noreferrer"
         >
-            {country === 'USA' ? province : country} virus data
+            {country === 'USA' && province ? province : country} virus data
         </a>
     </div>
 );
