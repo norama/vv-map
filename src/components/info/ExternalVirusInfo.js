@@ -13,7 +13,7 @@ function countryMap(country) {
 
 const ExternalVirusInfo = ({ country, province }) => (
     <div className="__CountryVirusInfo__">
-        <a href={country === 'USA' ?
+        <a href={country === 'USA' && province ?
             process.env.REACT_APP_VIRUS_USA_REFERENCE_BASE_URL+'/'+province : 
             process.env.REACT_APP_VIRUS_COUNTRY_REFERENCE_BASE_URL+'/'+countryMap(country)}
             target="_blank" rel="noopener noreferrer"
