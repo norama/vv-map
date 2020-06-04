@@ -145,7 +145,7 @@ function fetchVirusSpreadForProvince(province, dateRange, city) {
 
     const getErrorCount = (data) => {
         let started = false;
-        return data.reduce((acc, item) => {
+        const count = data.reduce((acc, item) => {
             if (started) {
                 if (item.confirmed === null) {
                     acc++;
@@ -157,6 +157,7 @@ function fetchVirusSpreadForProvince(province, dateRange, city) {
             }
             return acc;
         }, 0);
+        return started ? count : data.length;
     };
 
     return chain(getVirusSpreadPromise, dates.length, 5)
