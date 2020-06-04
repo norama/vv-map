@@ -143,9 +143,25 @@ function fetchVirusSpreadForProvince(province, dateRange, city) {
             });
     };
 
+    const getErrorCount = (data) => {
+        let started = false;
+        return data.reduce((acc, item) => {
+            if (started) {
+                if (item.confirmed === null) {
+                    acc++;
+                }
+            } else {
+                if (item.confirmed !== null) {
+                    started = true;
+                }
+            }
+            return acc;
+        }, 0);
+    };
+
     return chain(getVirusSpreadPromise, dates.length, 5)
         .then((data) => {
-            const errorCount = data.filter((item) => (item.confirmed === null)).length;
+            const errorCount = getErrorCount(data);
             if (errorCount / data.length > process.env.REACT_APP_MAX_VIRUS_DATA_ERROR_PERCENT / 100) {
                 console.log('-> Province: ' + province.name +
                     (city ? ', City: ' + city.name : '') +
