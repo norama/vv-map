@@ -24,6 +24,8 @@ The COVID-19 APIs currently used:
 Unfortunately this data latter data is often incomplete and only per country data is available
 for the majority of locations. TODO: use country specific APIs to get data for provinces / ciities.
 
+The country code is determinded by the [geonames](https://www.geonames.org/export/web-services.html) webservice, then the corresponding province is guessed by simplified approximate geographical distance.
+
 The purpose is to examine if there is a relation between weather parameters and virus spread.
 There is an article about one such calculation [here](https://www.medrxiv.org/content/10.1101/2020.03.16.20037168v1.full.pdf) and I tried to reproduce this on the calculation charts - however, I do not see a match here. Moreover, it is rather odd to estimate the precise number of daily confirmed cases as a function of weather parameters only - this should very much depend on the number previously confirmed cases as well as on the measures taken to prevent the spread of the virus.
 
