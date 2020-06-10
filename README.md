@@ -21,7 +21,7 @@ The chart library [amcharts 4](https://www.amcharts.com/docs/v4/) is used for di
 The COVID-19 APIs currently used:
 - [Corona API](https://about-corona.net/documentation) for data per country
 - [Covid API](https://covid-api.com/api) for data per province / USA city
-Unfortunately this data latter data is often incomplete and only per country data is available
+Unfortunately this data is often incomplete and only per country data is available
 for the majority of locations. TODO: use country specific APIs to get data for provinces / ciities.
 
 The country code is determinded by the [geonames](https://www.geonames.org/export/web-services.html) webservice, then the corresponding province is guessed by simplified approximate geographical distance.
