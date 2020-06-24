@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { DateRangePicker } from 'react-date-range';
 import { format } from 'date-fns';
 
@@ -43,6 +45,14 @@ const DateRange = ({ startDate, endDate, onChange, popoverOpen, onTogglePopover 
             </Popover>
         </div>
     );
+};
+
+DateRange.propTypes = {
+    startDate: PropTypes.instanceOf(Date).isRequired,
+    endDate: PropTypes.instanceOf(Date).isRequired,
+    onChange: PropTypes.func,
+    popoverOpen: PropTypes.bool,
+    onTogglePopover: PropTypes.func
 };
 
 export default DateRange;

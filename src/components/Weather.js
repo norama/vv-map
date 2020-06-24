@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+
 import { Redirect } from 'react-router-dom';
 import { TabContent, TabPane, Nav, NavItem, NavLink, Button } from 'reactstrap';
 
@@ -92,5 +94,17 @@ const Weather = ({ location, dateRange, name }) => {
         </>
     );
 }
+
+Weather.propTypes = {
+    location: PropTypes.shape({
+        lat: PropTypes.string.isRequired,
+        lng: PropTypes.string.isRequired
+    }).isRequired,
+    dateRange: PropTypes.shape({
+        startDate: PropTypes.string.isRequired, // 'yyyy-MM-dd'
+        endDate: PropTypes.string.isRequired    // 'yyyy-MM-dd'
+    }).isRequired,
+    name: PropTypes.string
+};
 
 export default Weather;

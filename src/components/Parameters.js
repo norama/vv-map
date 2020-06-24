@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+
 import { Redirect } from 'react-router';
 
 import { Button } from 'reactstrap';
@@ -87,6 +89,18 @@ const Parameters = ({ location, dateRange, name }) => {
             </div>
         </>
     );
+};
+
+Parameters.propTypes = {
+    location: PropTypes.shape({
+        lat: PropTypes.string.isRequired,
+        lng: PropTypes.string.isRequired
+    }).isRequired,
+    dateRange: PropTypes.shape({
+        startDate: PropTypes.string.isRequired, // 'yyyy-MM-dd'
+        endDate: PropTypes.string.isRequired    // 'yyyy-MM-dd'
+    }).isRequired,
+    name: PropTypes.string
 };
 
 export default Parameters;

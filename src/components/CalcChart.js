@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
-import theme from "@amcharts/amcharts4/themes/animated";
+//import theme from "@amcharts/amcharts4/themes/animated";
 
 import { createCertain, configCalcCharts } from '../chart/configChart';
 import { resetCalcChart } from '../chart/manageChart';
@@ -281,6 +282,19 @@ const CalcChart = ({ weatherData, location, dateRange, reset }) => {
             <References close={clicks} />
         </div>
     );
+};
+
+CalcChart.propTypes = {
+    weatherData: PropTypes.array,
+    location: PropTypes.shape({
+        lat: PropTypes.string.isRequired,
+        lng: PropTypes.string.isRequired
+    }).isRequired,
+    dateRange: PropTypes.shape({
+        startDate: PropTypes.string.isRequired, // 'yyyy-MM-dd'
+        endDate: PropTypes.string.isRequired    // 'yyyy-MM-dd'
+    }).isRequired,
+    reset: PropTypes.bool
 };
 
 export default CalcChart;

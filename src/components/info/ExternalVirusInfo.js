@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import './ExternalVirusInfo.css';
 
@@ -23,5 +24,10 @@ const ExternalVirusInfo = ({ country, province }) => (
         </a>
     </div>
 );
+
+ExternalVirusInfo.propTypes = {
+    country: PropTypes.string.isRequired,
+    province: PropTypes.string
+};
 
 export default ExternalVirusInfo;

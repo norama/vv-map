@@ -1,12 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { Badge } from 'reactstrap';
 
 import './LocationVirusInfo.css';
 
 function formatPopulation(population) {
-    const n = parseInt(population);
-    return n.toLocaleString();
+    return population ? population.toLocaleString() : null;
 }
 
 const DataBadge = ({ color, data }) => data ? (
@@ -20,8 +20,15 @@ const LocationVirusInfo = ({ country, province, city, population }) => (
         <div className="data province"><DataBadge color="info" data={province} /></div>
         <div className="data city"><DataBadge color="danger" data={city} /></div>
         <div className="label">{population ? 'Population:' : null}</div>
-        <div className="data population">{population ? formatPopulation(population) : null}</div>
+        <div className="data population">{formatPopulation(population)}</div>
     </div>
 );
+
+LocationVirusInfo.propTypes = {
+    country: PropTypes.string.isRequired,
+    province: PropTypes.string,
+    city: PropTypes.string,
+    population: PropTypes.number
+};
 
 export default LocationVirusInfo;

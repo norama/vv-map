@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
-import theme from "@amcharts/amcharts4/themes/animated";
+//import theme from "@amcharts/amcharts4/themes/animated";
 
 import { configDataChart, createCertain } from '../chart/configChart';
 import { resetDataChart } from '../chart/manageChart';
@@ -124,6 +125,18 @@ const DataChart = ({ location, dateRange, onDataLoaded }) => {
             <div id="dataChart" className="chart"></div>
         </div>
     );
+};
+
+DataChart.propTypes = {
+    location: PropTypes.shape({
+        lat: PropTypes.string.isRequired,
+        lng: PropTypes.string.isRequired
+    }).isRequired,
+    dateRange: PropTypes.shape({
+        startDate: PropTypes.string.isRequired, // 'yyyy-MM-dd'
+        endDate: PropTypes.string.isRequired    // 'yyyy-MM-dd'
+    }).isRequired,
+    onDataLoaded: PropTypes.func.isRequired
 };
 
 export default DataChart;
