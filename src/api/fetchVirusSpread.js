@@ -4,23 +4,19 @@ import { datesInRange, dateString, dateMillis } from '../util/date';
 import { chain } from '../util/promise';
 import { provinceNames } from '../util/usa';
 
-let cache = {
-    virusSpreadCountriesTimeline: null
-};
+let cache = {};
 
 const identity = (data) => (data);
 
-const transformVirusSpreadCountriesTimeline = (response) => {
-    let countries = response.data;
-    countries.forEach((country) => {
-        country.iso3 = ISO_2_TO_3[country.code];
-        country.timelineMap = {};
-        country.timeline.forEach((day) => {
-            country.timelineMap[dateMillis(day.date)] = day;
-        });
+const transformVirusSpreadCountryTimeline = (response) => {
+    let country = response.data;
+    country.iso3 = ISO_2_TO_3[country.code];
+    country.timelineMap = {};
+    country.timeline.forEach((day) => {
+        country.timelineMap[dateMillis(day.date)] = day;
     });
-    return countries;
-};
+    return country;
+}
 
 function getFetched(url, key, transform = identity) {
     if (cache[key]) {
@@ -230,7 +226,7 @@ function fetchVirusSpread(location, dateRange) {
         })
     );
 
-    return getFetched(process.env.REACT_APP_VIRUS_MAIN_URL, 'virusSpreadCountriesTimeline', transformVirusSpreadCountriesTimeline)
+    return getFetched(process.env.REACT_APP_VIRUS_MAIN_URL, 'virusSpreadCountries', response => response.data)
         .then((countries) => {
             return fetchCountryCode(location, countries)
                 .then((code) => {
@@ -244,6 +240,11 @@ function fetchVirusSpread(location, dateRange) {
                     console.error(error);
                     console.log('country code error, taking closest country', error);
                     return nearestCountry(location, countries);
+                })
+                .then((country) => {
+                    return getFetched(process.env.REACT_APP_VIRUS_MAIN_URL + '/' + country.code,
+                        'virusSpreadCountries-' + country.code,
+                        transformVirusSpreadCountryTimeline);
                 })
                 .then((country) => {
 
