@@ -5,7 +5,7 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 //import theme from "@amcharts/amcharts4/themes/animated";
 
-import { configDataChart, createCertain } from '../chart/configChart';
+import { configDataChart, createCertain, measureScale } from '../chart/configChart';
 import { resetDataChart } from '../chart/manageChart';
 
 import { dateMillis } from '../util/date';
@@ -85,7 +85,7 @@ const DataChart = ({ location, dateRange, onDataLoaded }) => {
         let data = [];
         let millis = 0;
 
-        weather.forEach((day, i) => {
+        weather.forEach((day) => {
             if (millis === 0) {
                 millis = dateMillis(day.date);
             }
@@ -105,8 +105,12 @@ const DataChart = ({ location, dateRange, onDataLoaded }) => {
                     mintempC: parseFloat(day.mintempC),
                     maxtempC: parseFloat(day.maxtempC),
                     tempC: parseFloat(hour.tempC),
-                    visibility: parseFloat(hour.visibility)
+                    visibility: parseFloat(hour.visibility),
+                    measure: parseFloat(hour.DewPointC) - parseFloat(hour.tempC),
                 };
+                const measure = item.DewPointC - item.tempC;
+                item.measure = measure;
+                item.measureScale = measureScale(measure);
                 data.push(item);
                 if (millis === SUMMER_TIME_START) {
                     millis += TWO_HOURS;

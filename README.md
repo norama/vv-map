@@ -40,12 +40,11 @@ I think that ocean also plays a role here, but it may be in favor of the virus a
 
 ## Weather data
 
-- min-max daily temperature
+- min-max daily temperatures
 - temperature
 - [dew point](https://en.wikipedia.org/wiki/Dew_point)
 - [relative humidity](https://en.wikipedia.org/wiki/Relative_humidity)
-- cloud cover
-- wind (graph by speed with direction in arrow bullet)
+- `dew point - temperature`, -1, 0 and above denoted by specific bullets (condensation is taking place)
 
 ## Estimate data
 

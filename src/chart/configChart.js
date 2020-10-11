@@ -59,6 +59,15 @@ function configWindBullet(bullet, showSize=true) {
     hoverState.properties.scale = 2;
 }
 
+function configTemperatureDiffBullet(bullet) {
+    bullet.propertyFields.scale = "measureScale";
+    bullet.circle.fill = am4core.color("white");
+    bullet.circle.stroke = am4core.color("red");
+    bullet.circle.strokeWidth = 2;
+    bullet.circle.fillOpacity = 0.5;
+    bullet.circle.strokeOpacity = 1;
+}
+
 function configDateAxis(dateAxis, startDate, endDate, dateFormat, delta=6) {
     dateAxis.renderer.grid.template.disabled = true;
     //dateAxis.renderer.labels.template.disabled = true;
@@ -247,6 +256,28 @@ function configVisibilitySeries(series) {
     configCircleBullet(bullet);
 }
 
+function configTemperatureDiffAxis(temperatureAxis) {
+    configTemperatureAxis(temperatureAxis);
+    temperatureAxis.title.text = "Dewp - temp (" + DEGREE + "C)";
+    //temperatureAxis.strictMinMax = true;
+    temperatureAxis.marginTop = 0;
+    temperatureAxis.marginBottom = 0;
+    temperatureAxis.renderer.line.stroke = am4core.color("#1dad91");
+    temperatureAxis.renderer.labels.template.fill = am4core.color("#1dad91");
+    temperatureAxis.title.fill = am4core.color("#1dad91");
+    temperatureAxis.renderer.grid.template.disabled = true;
+    //temperatureAxis.renderer.labels.template.disabled = true;
+    createGrid(temperatureAxis, 0);
+    createGrid(temperatureAxis, -1);
+    temperatureAxis.renderer.grid.template.stroke = am4core.color("red");
+    temperatureAxis.renderer.grid.template.strokeWidth = 1;
+    temperatureAxis.renderer.baseGrid.stroke = am4core.color("red");
+    temperatureAxis.renderer.baseGrid.strokeWidth = 2;
+    temperatureAxis.max = 5;
+
+    return temperatureAxis;
+}
+
 export function createCertain(chart) {
     let certain = chart.tooltipContainer.createChild(am4core.Container);
     certain.background.fill = am4core.color("#fff");
@@ -276,6 +307,7 @@ export const configDataChart = (chart) => {
         am4core.color("#573fd1"),
         am4core.color("green"),
         am4core.color("#0384fc"),
+        am4core.color("#1dad91"),
         am4core.color("#6f9ec9"),
         am4core.color("magenta"),
         am4core.color("#6a086e")
@@ -304,12 +336,18 @@ export const configDataChart = (chart) => {
     temperatureAxis2.marginBottom = 10;
     temperatureAxis2.renderer.opposite = true;
 
+/*
     let speedAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configSpeedAxis(speedAxis);
     speedAxis.marginTop = 10;
     speedAxis.marginBottom = 10;
     speedAxis.renderer.opposite = true;
     speedAxis.renderer.grid.template.disabled = true;
+*/
+
+    let temperatureDiffAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    configTemperatureDiffAxis(temperatureDiffAxis);
+    temperatureDiffAxis.renderer.opposite = true;
 
 /*
     let pictogramAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
@@ -356,11 +394,14 @@ export const configDataChart = (chart) => {
     percentAxis.renderer.line.stroke = series.stroke;
     percentAxis.renderer.labels.template.fill = series.stroke;
 
+/*
     // Cloud cover
     series = chart.series.push(new am4charts.LineSeries());
     configCloudCoverSeries(series);
     series.yAxis = percentAxis;
     percentAxis.title.fill = series.stroke;
+    series.hidden = true;
+*/
 
 /*
     // Weather pictogram
@@ -369,12 +410,16 @@ export const configDataChart = (chart) => {
     series.yAxis = pictogramAxis;
 */
 
+/*
     // Wind
     series = chart.series.push(new am4charts.LineSeries());
     configWindSpeedSeries(series);
     series.yAxis = speedAxis;
     speedAxis.renderer.line.stroke = series.stroke;
     speedAxis.renderer.labels.template.fill = series.stroke;
+    series.hidden = true;
+*/
+
 /*
     // Wind pictogram
     series = chart.series.push(new am4charts.LineSeries());
@@ -382,11 +427,18 @@ export const configDataChart = (chart) => {
     series.yAxis = pictogramAxis2;
 */
 
+/*
     // Visibility
     series = chart.series.push(new am4charts.LineSeries());
     configVisibilitySeries(series);
     series.yAxis = speedAxis;
     speedAxis.title.fill = series.stroke;
+    series.hidden = true;
+*/
+
+    let mseries = chart.series.push(new am4charts.LineSeries());
+    configMeasureSeries(mseries);
+    mseries.yAxis = temperatureDiffAxis;
 
     chart.legend = new am4charts.Legend();
     chart.legend.reverseOrder = true;
@@ -456,9 +508,8 @@ function configMeasureSeries(series) {
     series.tooltipText = "dewpoint - temp: {measure}";
     series.strokeWidth = 3;
 
-    series.minBulletDistance = 10;
-    let bullet = series.bullets.push(new am4charts.Bullet());
-    configCircleBullet(bullet);
+    let bullet = series.bullets.push(new am4charts.CircleBullet());
+    configTemperatureDiffBullet(bullet);
 }
 
 function configVirusAllSeries(series) {
@@ -539,23 +590,7 @@ const addEstimateAxes = (chart) => {
     createGrid(percentAxis, 100);
 
     let temperatureAxis = chart.yAxes.push(new am4charts.ValueAxis());
-    configTemperatureAxis(temperatureAxis);
-    temperatureAxis.title.text = "Dewp - temp (" + DEGREE + "C)";
-    //temperatureAxis.strictMinMax = true;
-    temperatureAxis.marginTop = 0;
-    temperatureAxis.marginBottom = 0;
-    temperatureAxis.renderer.line.stroke = am4core.color("#1dad91");
-    temperatureAxis.renderer.labels.template.fill = am4core.color("#1dad91");
-    temperatureAxis.title.fill = am4core.color("#1dad91");
-    temperatureAxis.renderer.grid.template.disabled = true;
-    //temperatureAxis.renderer.labels.template.disabled = true;
-    createGrid(temperatureAxis, 0);
-    createGrid(temperatureAxis, -1);
-    temperatureAxis.renderer.grid.template.stroke = am4core.color("red");
-    temperatureAxis.renderer.grid.template.strokeWidth = 1;
-    temperatureAxis.renderer.baseGrid.stroke = am4core.color("red");
-    temperatureAxis.renderer.baseGrid.strokeWidth = 2;
-    temperatureAxis.max = 5;
+    configTemperatureDiffAxis(temperatureAxis);
 
     //percentAxis.syncWithAxis = temperatureAxis;
     //percentAxis.showOnInit = true;
@@ -756,3 +791,7 @@ export const configCalcCharts = (virusChart, estimateChart) => {
 
     syncCalcCharts(virusChart, estimateChart);
 }
+
+export const measureScale = (measure) => (
+    measure >= 0 ? 2 : (measure === -1 ? 1 : 0)
+); 

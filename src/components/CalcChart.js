@@ -5,7 +5,7 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 //import theme from "@amcharts/amcharts4/themes/animated";
 
-import { createCertain, configCalcCharts } from '../chart/configChart';
+import { createCertain, configCalcCharts, measureScale } from '../chart/configChart';
 import { resetCalcChart } from '../chart/manageChart';
 
 import fetchVirusSpread from '../api/fetchVirusSpread';
@@ -198,7 +198,8 @@ const CalcChart = ({ weatherData, location, dateRange, reset }) => {
                     measure: hourData.dewpoint - hourData.temp,
                     Humidity: hour.Humidity,
                     cloudcover: hour.cloudcover,
-                }
+                };
+                item.measureScale = measureScale(item.measure);
                 const virusDay = locationData.timelineMap[item.date];
                 if (virusDay) {
                     item.confirmed = virusDay.confirmed;
