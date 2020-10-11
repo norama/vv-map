@@ -132,6 +132,20 @@ function configPercentAxis(percentAxis) {
     percentAxis.max = 110;
     percentAxis.strictMinMax = true;
     percentAxis.renderer.minGridDistance = 30;
+
+    percentAxis.strictMinMax = true;
+    percentAxis.marginTop = 0;
+    percentAxis.marginBottom = 0;
+    percentAxis.renderer.line.stroke = am4core.color("#0384fc");
+    percentAxis.renderer.labels.template.fill = am4core.color("#0384fc");
+    percentAxis.title.fill = am4core.color("#0384fc");
+
+    percentAxis.renderer.grid.template.disabled = true;
+    //percentAxis.renderer.labels.template.disabled = true;
+    percentAxis.renderer.grid.template.stroke = am4core.color("blue");
+    percentAxis.renderer.grid.template.strokeWidth = 1;
+    createGrid(percentAxis, 50);
+    createGrid(percentAxis, 100);
 }
 
 function configTemperatureAxis(temperatureAxis) {
@@ -267,7 +281,7 @@ function configTemperatureDiffAxis(temperatureAxis) {
     temperatureAxis.title.fill = am4core.color("#1dad91");
     temperatureAxis.renderer.grid.template.disabled = true;
     //temperatureAxis.renderer.labels.template.disabled = true;
-    createGrid(temperatureAxis, 0);
+    createGridWithBullet(temperatureAxis, 0);
     createGrid(temperatureAxis, -1);
     temperatureAxis.renderer.grid.template.stroke = am4core.color("red");
     temperatureAxis.renderer.grid.template.strokeWidth = 1;
@@ -346,8 +360,8 @@ export const configDataChart = (chart) => {
 */
 
     let temperatureDiffAxis = chart.yAxes.push(new am4charts.ValueAxis());
-    configTemperatureDiffAxis(temperatureDiffAxis);
     temperatureDiffAxis.renderer.opposite = true;
+    configTemperatureDiffAxis(temperatureDiffAxis);
 
 /*
     let pictogramAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
@@ -503,6 +517,7 @@ function configCalc2Series(series) {
 
 function configMeasureSeries(series) {
     series.name = "dewpoint - temp";
+    series.legendSettings.labelText = "Dewp - temp\n[bold red]o[/] [bold]condensation[/]";
     series.dataFields.dateX = "date";
     series.dataFields.valueY = "measure";
     series.tooltipText = "dewpoint - temp: {measure}";
@@ -568,26 +583,27 @@ function createGrid(valueAxis, value) {
     range.label.text = "{value}";
 }
 
+function createGridWithBullet(valueAxis, value) {
+    var range = valueAxis.axisRanges.create();
+    range.value = value;
+    range.bullet = new am4core.Circle();
+    range.bullet.fill = am4core.color("white");
+    range.bullet.stroke = am4core.color("red");
+    range.bullet.strokeOpacity = 0.7;
+    range.bullet.strokeWidth = 2;
+    range.bullet.width = 10;
+    range.bullet.height = 10;
+    range.bullet.dx = valueAxis.renderer.opposite ? 30 : -30;
+}
+
 const addEstimateAxes = (chart) => {
 
     let calcAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configCalcRefAxis(calcAxis);
 
     let percentAxis = chart.yAxes.push(new am4charts.ValueAxis());
-    configPercentAxis(percentAxis);
-    percentAxis.strictMinMax = true;
-    percentAxis.marginTop = 0;
-    percentAxis.marginBottom = 0;
-    percentAxis.renderer.line.stroke = am4core.color("#0384fc");
-    percentAxis.renderer.labels.template.fill = am4core.color("#0384fc");
-    percentAxis.title.fill = am4core.color("#0384fc");
+    configPercentAxis(percentAxis);    
     percentAxis.renderer.opposite = true;
-    percentAxis.renderer.grid.template.disabled = true;
-    //percentAxis.renderer.labels.template.disabled = true;
-    percentAxis.renderer.grid.template.stroke = am4core.color("blue");
-    percentAxis.renderer.grid.template.strokeWidth = 1;
-    createGrid(percentAxis, 50);
-    createGrid(percentAxis, 100);
 
     let temperatureAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configTemperatureDiffAxis(temperatureAxis);
