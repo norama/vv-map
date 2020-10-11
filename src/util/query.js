@@ -1,4 +1,5 @@
 import { useLocation } from 'react-router-dom';
+import { format, startOfMonth, subMonths } from 'date-fns';
 
 class Params extends URLSearchParams {
 
@@ -16,8 +17,9 @@ export function useQuery() {
 
 export const LONDON_NAME = 'London';
 
-export const START_DATE = '2020-03-01';
-export const END_DATE = '2020-03-31';
+// last 2 months
+export const START_DATE = format(subMonths(startOfMonth(new Date()), 1), 'yyyy-MM-dd');
+export const END_DATE = format(new Date(), 'yyyy-MM-dd');
 
 export const LONDON_LATLNG = {
     lat: '51.533',
