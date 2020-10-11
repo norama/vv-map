@@ -594,7 +594,8 @@ function createGridWithBullet(valueAxis, value) {
     range.bullet.width = 10;
     range.bullet.height = 10;
     range.bullet.dx = valueAxis.renderer.opposite ? 30 : -30;
-}
+    range.bullet.dy = -1;
+ }
 
 const addEstimateAxes = (chart) => {
 
