@@ -317,7 +317,7 @@ export const configDataChart = (chart) => {
 
     chart.colors.list = [
         am4core.color("blue"),
-        am4core.color("red"),
+        am4core.color("darkred"),
         am4core.color("#573fd1"),
         am4core.color("green"),
         am4core.color("#0384fc"),
