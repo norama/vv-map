@@ -129,7 +129,7 @@ function configPercentAxis(percentAxis) {
     percentAxis.title.fontWeight = 700;
     percentAxis.title.fontFamily = FONT;
     percentAxis.min = -10;
-    percentAxis.max = 120;
+    percentAxis.max = 110;
     percentAxis.strictMinMax = true;
     percentAxis.renderer.minGridDistance = 30;
 
