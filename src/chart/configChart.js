@@ -129,7 +129,7 @@ function configPercentAxis(percentAxis) {
     percentAxis.title.fontWeight = 700;
     percentAxis.title.fontFamily = FONT;
     percentAxis.min = -10;
-    percentAxis.max = 110;
+    percentAxis.max = 120;
     percentAxis.strictMinMax = true;
     percentAxis.renderer.minGridDistance = 30;
 
@@ -287,7 +287,7 @@ function configTemperatureDiffAxis(temperatureAxis) {
     temperatureAxis.renderer.grid.template.strokeWidth = 1;
     temperatureAxis.renderer.baseGrid.stroke = am4core.color("red");
     temperatureAxis.renderer.baseGrid.strokeWidth = 2;
-    temperatureAxis.max = 5;
+    temperatureAxis.max = 8;
 
     return temperatureAxis;
 }
@@ -336,7 +336,7 @@ export const configDataChart = (chart) => {
 */
     let percentAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configPercentAxis(percentAxis);
-    percentAxis.marginTop = 10;
+    percentAxis.marginTop = 0;
     percentAxis.marginBottom = 10;
 
     let temperatureAxis = chart.yAxes.push(new am4charts.ValueAxis());
@@ -371,33 +371,30 @@ export const configDataChart = (chart) => {
     pictogramAxis2.renderer.opposite = true;
 */
     let scrollbarX = new am4charts.XYChartScrollbar();
+    scrollbarX.minHeight = 10;
     //let scrollbarY = new am4charts.XYChartScrollbar();
 
     // Min. day temperature
     let series = chart.series.push(new am4charts.StepLineSeries());
     configMinDayTemperatureSeries(series);
     series.yAxis = temperatureAxis;
-    scrollbarX.series.push(series);
     //scrollbarY.series.push(series);
 
     // Max. day temperature
     series = chart.series.push(new am4charts.StepLineSeries());
     configMaxDayTemperatureSeries(series);
     series.yAxis = temperatureAxis;
-    scrollbarX.series.push(series);
     //scrollbarY.series.push(series);
 
     // Temperature
     series = chart.series.push(new am4charts.LineSeries());
     configTemperatureSeries(series);
     series.yAxis = temperatureAxis;
-    scrollbarX.series.push(series);
 
     // Dew point
     series = chart.series.push(new am4charts.LineSeries());
     configDewPointSeries(series);
     series.yAxis = temperatureAxis;
-    //scrollbarX.series.push(series);
     //scrollbarY.series.push(series);
 
     // Relative humidity
@@ -466,8 +463,12 @@ export const configDataChart = (chart) => {
 
     chart.cursor = new am4charts.XYCursor();
 
-    scrollbarX.minHeight = 30;
     chart.scrollbarX = scrollbarX;
+    chart.scrollbarX.background.fill = am4core.color("#2e3033");
+    chart.scrollbarX.background.fillOpacity = 0.2;
+    chart.scrollbarX.thumb.background.fill = am4core.color("#848f94");
+    chart.scrollbarX.thumb.background.fillOpacity = 0.2;
+    chart.scrollbarX.parent = chart.bottomAxesContainer;
     //chart.scrollbarY = scrollbarY;
 };
 
@@ -516,11 +517,11 @@ function configCalc2Series(series) {
 }
 
 function configMeasureSeries(series) {
-    series.name = "dewpoint - temp";
-    series.legendSettings.labelText = "Dewp - temp\n[bold red]o[/] [bold]condensation[/]";
+    series.name = "Dew point - temp";
+    series.legendSettings.labelText = "Dew point - temp\n[bold red]o[/] [bold]condensation[/]";
     series.dataFields.dateX = "date";
     series.dataFields.valueY = "measure";
-    series.tooltipText = "dewpoint - temp: {measure}";
+    series.tooltipText = "Dew point - temp: {measure}";
     series.strokeWidth = 3;
 
     let bullet = series.bullets.push(new am4charts.CircleBullet());

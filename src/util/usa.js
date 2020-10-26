@@ -58,7 +58,6 @@ export const provinceNames = {
     WV: 'West Virginia',
     WI: 'Wisconsin',
     WY: 'Wyoming',
-    AE: 'Armed Forces Africa',
     AA: 'Armed Forces Americas (except Canada)',
     AE: 'Armed Forces Canada',
     AP: 'Armed Forces Pacific'
