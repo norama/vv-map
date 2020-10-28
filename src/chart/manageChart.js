@@ -1,5 +1,3 @@
-import { addDays, subDays } from 'date-fns';
-
 import { configDateRange } from './configChart';
 
 const DATE_FORMAT = "MM-dd:HH";

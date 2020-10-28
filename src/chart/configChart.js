@@ -19,6 +19,7 @@ function configCircleBullet(bullet) {
     hoverState.properties.scale = 2;
 }
 
+/*
 function configWeatherBullet(bullet) {
     var image = bullet.createChild(am4core.Image);
     image.propertyFields.href = "weatherIconUrl";
@@ -32,7 +33,9 @@ function configWeatherBullet(bullet) {
     var hoverState = bullet.states.create("hover");
     hoverState.properties.scale = 3;
 }
+*/
 
+/*
 function configWindBullet(bullet, showSize=true) {
 
     // Bind `rotation` property to `angle` field in data
@@ -58,6 +61,7 @@ function configWindBullet(bullet, showSize=true) {
     var hoverState = bullet.states.create("hover");
     hoverState.properties.scale = 2;
 }
+*/
 
 function configTemperatureDiffBullet(bullet) {
     bullet.propertyFields.scale = "measureScale";
@@ -103,6 +107,7 @@ function configDateAxis(dateAxis, startDate, endDate, dateFormat, delta=6) {
     ]);
 }
 
+/*
 function configPictogramAxis(pictogramAxis) {
     pictogramAxis.renderer.grid.template.disabled = true;
     pictogramAxis.renderer.labels.template.disabled = true;
@@ -113,7 +118,9 @@ function configPictogramAxis(pictogramAxis) {
     pictogramAxis.max = 3;
     pictogramAxis.renderer.minGridDistance = 10;
 }
+*/
 
+/*
 function configSpeedAxis(speedAxis) {
     speedAxis.title.text = "Speed (km/h), Dist (km)";
     speedAxis.title.fontWeight = 700;
@@ -123,6 +130,7 @@ function configSpeedAxis(speedAxis) {
     speedAxis.strictMinMax = true;
     speedAxis.renderer.minGridDistance = 30;
 }
+*/
 
 function configPercentAxis(percentAxis) {
     percentAxis.title.text = "Percent (%)";
@@ -228,6 +236,7 @@ function configCloudCoverSeries(series) {
     configCircleBullet(bullet);
 }
 
+/*
 function configWeatherPictogramSeries(series) {
     series.name = "Weather";
     series.dataFields.dateX = "date";
@@ -238,7 +247,9 @@ function configWeatherPictogramSeries(series) {
     let bullet = series.bullets.push(new am4charts.Bullet());
     configWeatherBullet(bullet);
 }
+*/
 
+/*
 function configWindPictogramSeries(series) {
     series.name = "Wind";
     series.dataFields.dateX = "date";
@@ -248,7 +259,9 @@ function configWindPictogramSeries(series) {
     let bullet = series.bullets.push(new am4charts.Bullet());
     configWindBullet(bullet, true);
 }
+*/
 
+/*
 function configWindSpeedSeries(series) {
     series.name = "Wind";
     series.dataFields.dateX = "date";
@@ -258,7 +271,9 @@ function configWindSpeedSeries(series) {
     configWindBullet(bullet);
     series.strokeWidth = 1;
 }
+*/
 
+/*
 function configVisibilitySeries(series) {
     series.name = "Visibility";
     series.dataFields.dateX = "date";
@@ -271,6 +286,7 @@ function configVisibilitySeries(series) {
     let bullet = series.bullets.push(new am4charts.Bullet());
     configCircleBullet(bullet);
 }
+*/
 
 function configTemperatureDiffAxis(temperatureAxis) {
     configTemperatureAxis(temperatureAxis);

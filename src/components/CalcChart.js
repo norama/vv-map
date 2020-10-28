@@ -89,14 +89,16 @@ const calc2 = ({ temp, wind, rh }) => (
     - 401.8395
 );
 
+/*
 const calcRH = (d, t) => {
     const b = t < 0 ? Math.E : 10;
     return Math.pow(b, (7.5 * d) / (237.3 + d) - (7.5 * t) / (237.3 + t));
 };
+*/
 
-const avg = (arr) => (arr.reduce((a, b) => (a + b), 0) / arr.length);
+//const avg = (arr) => (arr.reduce((a, b) => (a + b), 0) / arr.length);
 
-const fieldAvg = (arr, field) => (arr.reduce((a, b) => (a + b[field]), 0) / arr.length);
+//const fieldAvg = (arr, field) => (arr.reduce((a, b) => (a + b[field]), 0) / arr.length);
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
@@ -228,7 +230,7 @@ const CalcChart = ({ weatherData, location, dateRange, reset }) => {
             };
         });
     };
-
+/*
     const calcDataPerDay = () => {
 
         let data = [];
@@ -256,7 +258,7 @@ const CalcChart = ({ weatherData, location, dateRange, reset }) => {
 
         return data;
     };
-
+*/
     const incClicks = () => {
         setClicks((c) => (c + 1));
     };
