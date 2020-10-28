@@ -156,6 +156,8 @@ function configPercentAxis(percentAxis) {
     percentAxis.renderer.grid.template.strokeWidth = 1;
     createGrid(percentAxis, 50);
     createGrid(percentAxis, 100);
+
+    percentAxis.includeRangesInMinMax = true;
 }
 
 function configTemperatureAxis(temperatureAxis) {
@@ -306,11 +308,13 @@ function configTemperatureDiffAxis(temperatureAxis) {
     temperatureAxis.renderer.baseGrid.stroke = am4core.color("red");
     temperatureAxis.renderer.baseGrid.strokeWidth = 2;
 
-    temperatureAxis.min = -20;
+    //temperatureAxis.min = -20;
     //temperatureAxis.max = 0;
     //temperatureAxis.extraMin = 0.2;
     temperatureAxis.extraMax = 0.1;
     temperatureAxis.strictMinMax = true;
+
+    temperatureAxis.includeRangesInMinMax = true;
 
     return temperatureAxis;
 }
@@ -620,6 +624,7 @@ const addVirusAxes = (chart) => {
 function createGrid(valueAxis, value) {
     var range = valueAxis.axisRanges.create();
     range.value = value;
+    range.endValue = value;
     range.label.text = "{value}";
 }
 
