@@ -128,12 +128,14 @@ function configPercentAxis(percentAxis) {
     percentAxis.title.text = "Percent (%)";
     percentAxis.title.fontWeight = 700;
     percentAxis.title.fontFamily = FONT;
-    percentAxis.min = -10;
-    percentAxis.max = 110;
+    //percentAxis.min = 0;
+    percentAxis.max = 100;
+    //percentAxis.extraMin = 0.2;
+    percentAxis.extraMax = 0.1;
+    
     percentAxis.strictMinMax = true;
-    percentAxis.renderer.minGridDistance = 30;
+    //percentAxis.renderer.minGridDistance = 50;
 
-    percentAxis.strictMinMax = true;
     percentAxis.marginTop = 0;
     percentAxis.marginBottom = 0;
     percentAxis.renderer.line.stroke = am4core.color("#0384fc");
@@ -281,13 +283,18 @@ function configTemperatureDiffAxis(temperatureAxis) {
     temperatureAxis.title.fill = am4core.color("#1dad91");
     temperatureAxis.renderer.grid.template.disabled = true;
     //temperatureAxis.renderer.labels.template.disabled = true;
-    createGridWithBullet(temperatureAxis, 0);
+    createGridWithBullet(temperatureAxis, 0, "condensation");
     createGrid(temperatureAxis, -1);
     temperatureAxis.renderer.grid.template.stroke = am4core.color("red");
     temperatureAxis.renderer.grid.template.strokeWidth = 1;
     temperatureAxis.renderer.baseGrid.stroke = am4core.color("red");
     temperatureAxis.renderer.baseGrid.strokeWidth = 2;
-    temperatureAxis.max = 8;
+
+    temperatureAxis.min = -20;
+    //temperatureAxis.max = 0;
+    //temperatureAxis.extraMin = 0.2;
+    temperatureAxis.extraMax = 0.1;
+    temperatureAxis.strictMinMax = true;
 
     return temperatureAxis;
 }
@@ -362,6 +369,8 @@ export const configDataChart = (chart) => {
     let temperatureDiffAxis = chart.yAxes.push(new am4charts.ValueAxis());
     temperatureDiffAxis.renderer.opposite = true;
     configTemperatureDiffAxis(temperatureDiffAxis);
+
+    //percentAxis.syncWithAxis = temperatureDiffAxis;
 
 /*
     let pictogramAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
@@ -521,8 +530,22 @@ function configMeasureSeries(series) {
     series.legendSettings.labelText = "Dew point - temp\n[bold red]o[/] [bold]condensation[/]";
     series.dataFields.dateX = "date";
     series.dataFields.valueY = "measure";
-    series.tooltipText = "Dew point - temp: {measure}";
+    //series.tooltipText = "Dew point - temp: {measure}";
     series.strokeWidth = 3;
+
+    series.adapter.add('tooltipText', (text, target) => {
+        const data = target.tooltipDataItem.dataContext;
+        if (!data) {
+            return '';
+        }
+        let tooltip = `DewPoint-Temp: ${data.measure}`;
+        if (data.measure === -1) {
+            tooltip += "\n[red]condensation?[/]";
+        } else if (data.measure >= 0) {
+            tooltip += "\n[bold red]condensation[/]";
+        }
+        return tooltip;
+    });
 
     let bullet = series.bullets.push(new am4charts.CircleBullet());
     configTemperatureDiffBullet(bullet);
@@ -584,9 +607,10 @@ function createGrid(valueAxis, value) {
     range.label.text = "{value}";
 }
 
-function createGridWithBullet(valueAxis, value) {
+function createGridWithBullet(valueAxis, value, label) {
     var range = valueAxis.axisRanges.create();
     range.value = value;
+    range.endValue = value;
     range.bullet = new am4core.Circle();
     range.bullet.fill = am4core.color("white");
     range.bullet.stroke = am4core.color("red");
@@ -596,6 +620,35 @@ function createGridWithBullet(valueAxis, value) {
     range.bullet.height = 10;
     range.bullet.dx = valueAxis.renderer.opposite ? 30 : -30;
     range.bullet.dy = -1;
+
+    valueAxis.adapter.add("getTooltipText", function(text, target) {
+        var x = parseInt(text);
+        return x < value - 1 ? text : 
+            (x === value - 1 ? text + ": [red]" + label + "?[/]" :
+                               text + ": [bold red]" + label + "[/]");
+      });
+/*
+    range.label.text = label;
+    range.label.fill = range.bullet.stroke;
+    range.label.inside = true;
+    range.label.verticalCenter = "middle";
+    range.label.dx = 180;
+    range.label.dy = -2;
+*/
+/*
+    range.axisFill.tooltip = new am4core.Tooltip();
+    range.axisFill.tooltipText = "Condensation";
+    //range.axisFill.tooltipPosition = "pointer";
+    range.axisFill.interactionsEnabled = true;
+    range.axisFill.isMeasured = true;
+    range.axisFill.align = "right";
+    range.axisFill.showTooltipOn = "always";
+    range.axisFill.fill = am4core.color("red");
+    range.axisFill.fillOpacity = 0.8;
+    range.axisFill.id = "CondensationLabel";
+    range.axisFill.location = 1;
+    range.axisFill.parent = chart.rightAxesContainer;
+*/
  }
 
 const addEstimateAxes = (chart) => {
