@@ -195,8 +195,8 @@ const CalcChart = ({ weatherData, location, dateRange, reset }) => {
                 hourData.rh = hourData.humidity; //calcRH(hourData.dewpoint, hourData.temp);
                 let item = {
                     date: hour.date,
-                    calc1: calc1(hourData),
-                    calc2: calc2(hourData),
+                    //calc1: calc1(hourData),
+                    //calc2: calc2(hourData),
                     measure: hourData.dewpoint - hourData.temp,
                     Humidity: hour.Humidity,
                     cloudcover: hour.cloudcover,

@@ -679,10 +679,10 @@ const addEstimateAxes = (chart) => {
 
     let percentAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configPercentAxis(percentAxis);    
-    percentAxis.renderer.opposite = true;
 
     let temperatureAxis = chart.yAxes.push(new am4charts.ValueAxis());
     configTemperatureDiffAxis(temperatureAxis);
+    temperatureAxis.renderer.opposite = true;
 
     //percentAxis.syncWithAxis = temperatureAxis;
     //percentAxis.showOnInit = true;
@@ -722,7 +722,7 @@ const syncCalcCharts = (topChart, bottomChart) => {
 const configVirusChart = (chart) => {
     chart.preloader.disabled = true;
 
-    chart.paddingRight = 30;
+    chart.paddingRight = 60;
 
     chart.colors.list = [
         am4core.color("#2e3033"),
@@ -746,8 +746,8 @@ const configVirusChart = (chart) => {
     let series = chart.series.push(new am4charts.StepLineSeries());
     configVirusAllSeries(series);
     series.yAxis = virAllAxis;
-    series.hidden = true;
 
+/*
     // Calc with visibility
     series = chart.series.push(new am4charts.LineSeries());
     configCalc1Series(series);
@@ -759,7 +759,7 @@ const configVirusChart = (chart) => {
     configCalc2Series(series);
     series.yAxis = calcAxis;
     series.hidden = true;
-
+*/
     let legendContainer = am4core.create("topLegend", am4core.Container);
     legendContainer.width = am4core.percent(100);
     legendContainer.height = 30;
@@ -788,6 +788,7 @@ const configVirusChart = (chart) => {
     scrollbarX.minHeight = 10;
     scrollbarX.series.push(mseries);
     chart.scrollbarX = scrollbarX;
+    chart.scrollbarX.marginBottom = 35;
     chart.scrollbarX.background.fill = am4core.color("#2e3033");
     chart.scrollbarX.background.fillOpacity = 0.2;
     chart.scrollbarX.thumb.background.fill = am4core.color("#848f94");
@@ -801,7 +802,7 @@ const configVirusChart = (chart) => {
 const configEstimateChart = (chart) => {
     chart.preloader.disabled = true;
 
-    chart.paddingRight = 30;
+    chart.paddingRight = 60;
 
     chart.colors.list = [
         am4core.color("#1dad91"),
@@ -832,7 +833,7 @@ const configEstimateChart = (chart) => {
     configCloudCoverSeries(series);
     series.yAxis = percentAxis;
     series.hidden = true;
-
+/*
     // Calc with visibility
     series = chart.series.push(new am4charts.LineSeries());
     configCalc1Series(series);
@@ -844,7 +845,7 @@ const configEstimateChart = (chart) => {
     configCalc2Series(series);
     series.yAxis = calcAxis;
     series.hidden = true;
-
+*/
     let legendContainer = am4core.create("bottomLegend", am4core.Container);
     legendContainer.width = am4core.percent(100);
     legendContainer.height = 30;
@@ -866,6 +867,7 @@ const configEstimateChart = (chart) => {
     scrollbarX.minHeight = 10;
     scrollbarX.series.push(mseries);
     chart.scrollbarX = scrollbarX;
+    chart.scrollbarX.marginTop = 35;
     chart.scrollbarX.background.fill = am4core.color("#cc6e21");
     chart.scrollbarX.background.fillOpacity = 0.2;
     chart.scrollbarX.thumb.background.fill = am4core.color("#1d997a");

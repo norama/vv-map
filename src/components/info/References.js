@@ -32,9 +32,11 @@ const References = ({ close }) => {
                             <ul>
                                 <li>Data per country:<br/><a href="https://about-corona.net/documentation" target="_blank" rel="noopener noreferrer">corona-api</a></li>
                                 <li>Data per province / USA city:<br/><a href="https://covid-api.com/api" target="_blank" rel="noopener noreferrer">covid-api</a></li>
-                            </ul> 
+                            </ul>
+                            {/* 
                             <h3>Meteorological approximations (with / without visibility)</h3>
                             <a href={process.env.REACT_APP_METEO_ARTICLE_URL} target="_blank" rel="noopener noreferrer">Roles of meteorological conditions in COVID-19 transmission on a worldwide scale</a>
+                            */}
                         </CardBody>
                     </Card>
                 </PopoverBody>
